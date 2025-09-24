@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Financial Calculator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: white;
+        }
+        .calculator-card {
+            background-color: #1e1e1e;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            max-width: 40rem;
+            margin: 2rem auto;
+            border: 1px solid #2d2d2d;
+        }
+        .input-group label {
+            font-weight: 500;
+            color: #d1d5db;
+        }
+        .input-group input {
+            border: 1px solid #4b5563;
+            background-color: #2d2d2d;
+            color: white;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #E34037;
+            box-shadow: 0 0 0 2px rgba(227, 64, 55, 0.5);
+        }
+        .btn-primary {
+            background-color: #E34037;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background-color: #bb2c22;
+        }
+        .btn-toggle {
+            background-color: #2d2d2d;
+            color: #d1d5db;
+        }
+        .btn-toggle.active {
+            background-color: #E34037;
+            color: white;
+        }
+        .result-box {
+            background-color: #2d2d2d;
+            border: 1px solid #4b5563;
+            color: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-top: 1.5rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        .faded {
+            opacity: 0.4;
+            pointer-events: none;
+            user-select: none;
+        }
+        .disabled-input {
+            cursor: not-allowed;
+            background-color: #2d2d2d;
+        }
+        .error {
+            color: #ef4444;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="p-4">
+
+    <div class="text-center my-8">
+        <h1>Advanced Financial Calculator</h1>
+        <p class="mt-2 text-lg text-gray-400">Plan your investments and retirement with advanced analysis.</p>
+    </div>
+
+    <!-- Unified Calculator -->
+    <div class="calculator-card">
+        <div class="flex justify-center mb-6 space-x-2">
+            <button id="lumpsumToggleBtn" class="btn-toggle active flex-1">Lump-Sum</button>
+            <button id="sipToggleBtn" class="btn-toggle flex-1">SIP</button>
+            <button id="fdToggleBtn" class="btn-toggle flex-1">FD</button>
+        </div>
+
+        <h2 id="calculatorTitle" class="text-2xl font-semibold text-gray-200 mb-6 text-center">Lump-Sum Investment</h2>
+        
+        <div class="space-y-4">
+            <!-- Step 1 Inputs (Accumulation) -->
+            <h3 class="text-lg font-semibold text-gray-400">Step 1: Calculate Your Future Corpus</h3>
+            <div class="input-group flex flex-col">
+                <label id="mainAmountLabel" for="mainAmount" class="mb-1">Lump-Sum Amount:</label>
+                <input type="number" id="mainAmount" placeholder="e.g., 100000" class="w-full rounded-xl p-2">
+            </div>
+
+            <div class="input-group flex flex-col">
+                <label for="investmentYears" class="mb-1">Investment Period (Years):</label>
+                <input type="number" id="investmentYears" placeholder="e.g., 10" class="w-full rounded-xl p-2">
+            </div>
+
+            <div class="input-group flex flex-col">
+                <label for="annualRate" class="mb-1">Expected Annual Return (%):</label>
+                <input type="number" id="annualRate" placeholder="e.g., 12" class="w-full rounded-xl p-2">
+                <div class="flex justify-between mt-2 space-x-2">
+                    <button data-rate="14" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Equity (14%)</button>
+                    <button data-rate="10" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Hybrid (10%)</button>
+                    <button data-rate="7" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Debt (7%)</button>
+                </div>
+            </div>
+
+            <div class="input-group flex flex-col">
+                <label for="inflationRate" class="mb-1">Expected Annual Inflation Rate (%):</label>
+                <input type="number" id="inflationRate" placeholder="e.g., 6" class="w-full rounded-xl p-2">
+            </div>
+
+            <div class="input-group flex flex-col">
+                <label for="taxRate" class="mb-1">Tax Rate (%):</label>
+                <input type="number" id="taxRate" placeholder="e.g., 10" class="w-full rounded-xl p-2">
+            </div>
+        </div>
+
+        <button id="calculateCorpusBtn" class="btn-primary w-full mt-6">Calculate Corpus</button>
+
+        <!-- Result Box and Step 2 (Fixed Income) -->
+        <div id="resultBox" class="result-box hidden">
+            <!-- Step 1 Result -->
+            <div id="corpusResult" class="mb-4"></div>
+            
+            <!-- Chart Container -->
+            <div class="w-full mb-6">
+                <canvas id="corpusChart"></canvas>
+            </div>
+
+            <!-- Step 2 Inputs (Faded by default) -->
+            <div id="incomeSection" class="faded">
+                <hr class="my-4 border-gray-600">
+                <h3 class="text-lg font-semibold text-gray-400">Step 2: Fixed Income Analysis</h3>
+                <div class="space-y-4 mt-4">
+                    <div class="input-group flex flex-col mb-4">
+                        <label for="withdrawalStrategy" class="mb-1">Withdrawal Strategy:</label>
+                        <select id="withdrawalStrategy" class="w-full p-2 border border-gray-600 rounded-xl disabled-input">
+                            <option value="fixed">Fixed Withdrawal</option>
+                            <option value="increasing">Increasing Withdrawal (with Inflation)</option>
+                            <option value="sustained">Sustained Withdrawal (for X years)</option>
+                        </select>
+                    </div>
+
+                    <div id="fixedWithdrawalGroup" class="input-group flex flex-col mb-4">
+                        <label for="withdrawalAmount" class="mb-1">Desired Withdrawal Amount:</label>
+                        <input type="number" id="withdrawalAmount" placeholder="e.g., 50000" class="w-full disabled-input rounded-xl p-2">
+                    </div>
+
+                    <div id="sustainedYearsGroup" class="input-group flex-col mb-4 hidden">
+                        <label for="sustainedYears" class="mb-1">Withdrawal Period (Years):</label>
+                        <input type="number" id="sustainedYears" placeholder="e.g., 20" class="w-full disabled-input rounded-xl p-2">
+                    </div>
+
+                    <div class="input-group flex flex-col mb-4">
+                        <label for="incomeFrequency" class="mb-1">Withdrawal Frequency:</label>
+                        <select id="incomeFrequency" class="w-full p-2 border border-gray-600 rounded-xl disabled-input">
+                            <option value="12">Monthly</option>
+                            <option value="4">Quarterly</option>
+                            <option value="2">Half-Yearly</option>
+                            <option value="1">Yearly</option>
+                        </select>
+                    </div>
+
+                    <button id="calculateFixedIncomeBtn" class="btn-primary w-full disabled-input">Calculate Longevity</button>
+                    <div id="incomeResult" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+        <button id="resetBtn" class="btn-primary w-full mt-6 hidden">Reset Calculator</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const lumpsumToggleBtn = document.getElementById('lumpsumToggleBtn');
+            const sipToggleBtn = document.getElementById('sipToggleBtn');
+            const fdToggleBtn = document.getElementById('fdToggleBtn');
+            const calculatorTitle = document.getElementById('calculatorTitle');
+            const mainAmountLabel = document.getElementById('mainAmountLabel');
+            const mainAmountInput = document.getElementById('mainAmount');
+            const investmentYearsInput = document.getElementById('investmentYears');
+            const annualRateInput = document.getElementById('annualRate');
+            const inflationRateInput = document.getElementById('inflationRate');
+            const taxRateInput = document.getElementById('taxRate');
+            const calculateCorpusBtn = document.getElementById('calculateCorpusBtn');
+            const calculateFixedIncomeBtn = document.getElementById('calculateFixedIncomeBtn');
+            const withdrawalStrategySelect = document.getElementById('withdrawalStrategy');
+            const fixedWithdrawalGroup = document.getElementById('fixedWithdrawalGroup');
+            const sustainedYearsGroup = document.getElementById('sustainedYearsGroup');
+            const withdrawalAmountInput = document.getElementById('withdrawalAmount');
+            const sustainedYearsInput = document.getElementById('sustainedYears');
+            const incomeFrequencySelect = document.getElementById('incomeFrequency');
+            const resultBox = document.getElementById('resultBox');
+            const corpusResult = document.getElementById('corpusResult');
+            const incomeSection = document.getElementById('incomeSection');
+            const incomeResult = document.getElementById('incomeResult');
+            const resetBtn = document.getElementById('resetBtn');
+
+            let isLumpsumMode = true;
+            let isSipMode = false;
+            let isFdMode = false;
+            let futureValue = 0;
+            let corpusChart;
+
+            const formatCurrency = (amount) => new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 0
+            }).format(amount);
+
+            // Chart setup
+            const setupChart = (data) => {
+                const ctx = document.getElementById('corpusChart').getContext('2d');
+                if (corpusChart) {
+                    corpusChart.destroy();
+                }
+                corpusChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [
+                            {
+                                label: 'Nominal Value',
+                                data: data.nominal,
+                                borderColor: '#E34037',
+                                tension: 0.1,
+                                fill: false,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'Inflation-Adjusted Value',
+                                data: data.real,
+                                borderColor: '#4ade80',
+                                tension: 0.1,
+                                fill: false,
+                                pointRadius: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Years',
+                                    color: '#d1d5db'
+                                },
+                                ticks: {
+                                    color: '#9ca3af'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Corpus Value',
+                                    color: '#d1d5db'
+                                },
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#9ca3af'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#d1d5db'
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            const toggleMode = (mode) => {
+                isLumpsumMode = mode === 'lumpsum';
+                isSipMode = mode === 'sip';
+                isFdMode = mode === 'fd';
+
+                lumpsumToggleBtn.classList.toggle('active', isLumpsumMode);
+                sipToggleBtn.classList.toggle('active', isSipMode);
+                fdToggleBtn.classList.toggle('active', isFdMode);
+
+                calculatorTitle.textContent = isLumpsumMode ? 'Lump-Sum Investment' : isSipMode ? 'SIP to Fixed Income' : 'Fixed Deposit (FD)';
+                mainAmountLabel.textContent = isSipMode ? 'Monthly SIP Amount:' : 'Lump-Sum Amount:';
+                mainAmountInput.placeholder = isSipMode ? 'e.g., 5000' : 'e.g., 100000';
+                
+                resetUI();
+            };
+
+            const resetUI = () => {
+                resultBox.classList.add('hidden');
+                corpusResult.innerHTML = '';
+                incomeResult.innerHTML = '';
+                if (corpusChart) {
+                    corpusChart.destroy();
+                }
+                // Fade and disable Step 2
+                incomeSection.classList.add('faded');
+                document.querySelectorAll('#incomeSection input, #incomeSection select, #incomeSection button').forEach(el => {
+                    el.classList.add('disabled-input');
+                    el.disabled = true;
+                });
+                resetBtn.classList.add('hidden');
+            };
+
+            const resetAll = () => {
+                mainAmountInput.value = '';
+                investmentYearsInput.value = '';
+                annualRateInput.value = '';
+                inflationRateInput.value = '';
+                taxRateInput.value = '';
+                withdrawalAmountInput.value = '';
+                sustainedYearsInput.value = '';
+                withdrawalStrategySelect.value = 'fixed';
+                fixedWithdrawalGroup.classList.remove('hidden');
+                sustainedYearsGroup.classList.add('hidden');
+                toggleMode('lumpsum');
+            };
+
+            lumpsumToggleBtn.addEventListener('click', () => toggleMode('lumpsum'));
+            sipToggleBtn.addEventListener('click', () => toggleMode('sip'));
+            fdToggleBtn.addEventListener('click', () => toggleMode('fd'));
+            resetBtn.addEventListener('click', resetAll);
+
+            // Handle rate buttons
+            document.querySelectorAll('.btn-rate').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    annualRateInput.value = e.target.getAttribute('data-rate');
+                });
+            });
+
+            // Handle withdrawal strategy change
+            withdrawalStrategySelect.addEventListener('change', (e) => {
+                const strategy = e.target.value;
+                if (strategy === 'sustained') {
+                    fixedWithdrawalGroup.classList.add('hidden');
+                    sustainedYearsGroup.classList.remove('flex');
+                    sustainedYearsGroup.classList.add('flex');
+                } else {
+                    fixedWithdrawalGroup.classList.remove('hidden');
+                    sustainedYearsGroup.classList.add('hidden');
+                }
+            });
+
+            // Step 1: Calculate the future corpus
+            calculateCorpusBtn.addEventListener('click', () => {
+                const mainAmount = parseFloat(mainAmountInput.value);
+                const investmentYears = parseFloat(investmentYearsInput.value);
+                const annualRate = parseFloat(annualRateInput.value) / 100;
+                const inflationRate = parseFloat(inflationRateInput.value) / 100 || 0;
+                const taxRate = parseFloat(taxRateInput.value) / 100 || 0;
+
+                // Input validation
+                if (isNaN(mainAmount) || isNaN(investmentYears) || isNaN(annualRate) || mainAmount <= 0 || investmentYears <= 0) {
+                    corpusResult.innerHTML = '<p class="text-red-600">Please fill in the main amount, investment years, and annual rate with valid, positive numbers.</p>';
+                    resetUI();
+                    return;
+                }
+                
+                const monthlyRate = annualRate / 12;
+                const monthlyInflationRate = inflationRate / 12;
+                
+                let nominalFutureValue = 0;
+                let totalInvested = 0;
+                let corpusHistoryNominal = [];
+                let corpusHistoryReal = [];
+                let yearsLabels = [];
+                
+                if (isLumpsumMode) {
+                    nominalFutureValue = mainAmount * Math.pow((1 + monthlyRate), investmentYears * 12);
+                    totalInvested = mainAmount;
+                } else if (isSipMode) {
+                    nominalFutureValue = mainAmount * ((Math.pow(1 + monthlyRate, investmentYears * 12) - 1) / monthlyRate) * (1 + monthlyRate);
+                    totalInvested = mainAmount * investmentYears * 12;
+                } else if (isFdMode) {
+                    // Simple compound interest for FD
+                    nominalFutureValue = mainAmount * Math.pow((1 + annualRate), investmentYears);
+                    totalInvested = mainAmount;
+                }
+
+                const totalReturns = nominalFutureValue - totalInvested;
+                let taxPaid = 0;
+                if (isFdMode) {
+                    // Tax on total returns for FD
+                    taxPaid = totalReturns * taxRate;
+                } else {
+                    // Simplified capital gains tax for SIP/Lumpsum
+                    const taxableReturns = Math.max(0, totalReturns - (totalInvested * 0.15));
+                    taxPaid = taxableReturns * taxRate;
+                }
+
+                const afterTaxFutureValue = nominalFutureValue - taxPaid;
+                const realFutureValue = afterTaxFutureValue / Math.pow((1 + inflationRate), investmentYears);
+
+                let currentNominalCorpus = isSipMode ? 0 : mainAmount;
+
+                for (let year = 0; year <= investmentYears; year++) {
+                    yearsLabels.push(year);
+                    if (isSipMode) {
+                        currentNominalCorpus = mainAmount * ((Math.pow(1 + annualRate/12, year * 12) - 1) / (annualRate/12)) * (1 + annualRate/12);
+                    } else if (isFdMode) {
+                        currentNominalCorpus = mainAmount * Math.pow((1 + annualRate), year);
+                    } else { // Lump-sum
+                        currentNominalCorpus = mainAmount * Math.pow((1 + annualRate), year);
+                    }
+                    
+                    const adjustedNominal = currentNominalCorpus;
+                    const adjustedReal = currentNominalCorpus / Math.pow((1 + inflationRate), year);
+
+                    corpusHistoryNominal.push(adjustedNominal);
+                    corpusHistoryReal.push(adjustedReal);
+                }
+
+                corpusResult.innerHTML = `
+                    <h3 class="font-bold mb-2 text-xl">Your Corpus</h3>
+                    <p class="text-sm">Total Invested: <span class="font-bold">${formatCurrency(totalInvested)}</span></p>
+                    <p class="text-sm">Total Returns: <span class="font-bold text-green-700">${formatCurrency(totalReturns)}</span></p>
+                    <p class="text-sm">Taxes Paid: <span class="font-bold text-red-600">${formatCurrency(taxPaid)}</span></p>
+                    <hr class="my-2 border-gray-600">
+                    <p class="mt-2 text-sm">Estimated Corpus after ${investmentYears} years: <span class="text-2xl font-bold">${formatCurrency(afterTaxFutureValue)}</span></p>
+                    <p class="text-sm">(Inflation-Adjusted: <span class="font-bold text-green-700">${formatCurrency(realFutureValue)}</span>)</p>
+                `;
+
+                resultBox.classList.remove('hidden');
+                
+                // Activate Step 2
+                incomeSection.classList.remove('faded');
+                document.querySelectorAll('#incomeSection input, #incomeSection select, #incomeSection button').forEach(el => {
+                    el.classList.remove('disabled-input');
+                    el.disabled = false;
+                });
+                
+                incomeResult.innerHTML = '';
+                futureValue = afterTaxFutureValue;
+                setupChart({
+                    labels: yearsLabels,
+                    nominal: corpusHistoryNominal,
+                    real: corpusHistoryReal
+                });
+                resetBtn.classList.remove('hidden');
+            });
+
+            // Step 2: Calculate fixed income from corpus
+            calculateFixedIncomeBtn.addEventListener('click', () => {
+                const annualRate = parseFloat(annualRateInput.value) / 100;
+                const inflationRate = parseFloat(inflationRateInput.value) / 100 || 0;
+                const withdrawalFrequency = parseFloat(incomeFrequencySelect.value);
+                const periodicRate = annualRate / withdrawalFrequency;
+                const periodicInflationRate = inflationRate / withdrawalFrequency;
+                const strategy = withdrawalStrategySelect.value;
+                
+                let withdrawalAmount = parseFloat(withdrawalAmountInput.value);
+                let sustainedYears = parseFloat(sustainedYearsInput.value);
+
+                let periods;
+                let finalCorpus = 0;
+                let corpusHistoryNominal = [];
+                let corpusHistoryReal = [];
+                let yearsLabels = [];
+                let currentCorpus = futureValue;
+                const maxSimulationPeriods = 50 * withdrawalFrequency;
+
+                if (strategy === 'fixed') {
+                    if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) {
+                        incomeResult.innerHTML = '<p class="error">Please enter a valid withdrawal amount.</p>';
+                        return;
+                    }
+
+                    periods = 0;
+                    while (currentCorpus > 0 && periods < maxSimulationPeriods) {
+                        currentCorpus = currentCorpus * (1 + periodicRate) - withdrawalAmount;
+                        periods++;
+                        corpusHistoryNominal.push(currentCorpus);
+                        corpusHistoryReal.push(currentCorpus / Math.pow((1 + periodicInflationRate), periods));
+                        yearsLabels.push(Math.floor(periods/withdrawalFrequency));
+                    }
+                    finalCorpus = Math.max(0, currentCorpus);
+                } else if (strategy === 'increasing') {
+                    if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) {
+                        incomeResult.innerHTML = '<p class="error">Please enter a valid initial withdrawal amount.</p>';
+                        return;
+                    }
+
+                    periods = 0;
+                    let currentWithdrawal = withdrawalAmount;
+                    while (currentCorpus > 0 && periods < maxSimulationPeriods) {
+                        currentCorpus = currentCorpus * (1 + periodicRate);
+                        currentCorpus -= currentWithdrawal;
+                        periods++;
+                        
+                        // Increase withdrawal amount periodically with inflation
+                        if (periods % withdrawalFrequency === 0) {
+                            currentWithdrawal *= (1 + inflationRate);
+                        }
+                        
+                        corpusHistoryNominal.push(currentCorpus);
+                        corpusHistoryReal.push(currentCorpus / Math.pow((1 + periodicInflationRate), periods));
+                        yearsLabels.push(Math.floor(periods/withdrawalFrequency));
+                    }
+                    finalCorpus = Math.max(0, currentCorpus);
+                } else if (strategy === 'sustained') {
+                    if (isNaN(sustainedYears) || sustainedYears <= 0) {
+                        incomeResult.innerHTML = '<p class="error">Please enter a valid withdrawal period in years.</p>';
+                        return;
+                    }
+
+                    periods = sustainedYears * withdrawalFrequency;
+                    if (periodicRate === 0) {
+                        withdrawalAmount = futureValue / periods;
+                    } else {
+                        withdrawalAmount = (futureValue * periodicRate) / (1 - Math.pow(1 + periodicRate, -periods));
+                    }
+                    
+                    let nominalCorpus = futureValue;
+                    for (let i = 0; i < periods; i++) {
+                        nominalCorpus = nominalCorpus * (1 + periodicRate) - withdrawalAmount;
+                        corpusHistoryNominal.push(nominalCorpus);
+                        corpusHistoryReal.push(nominalCorpus / Math.pow((1 + periodicInflationRate), i));
+                        yearsLabels.push(Math.floor(i/withdrawalFrequency));
+                    }
+                    finalCorpus = Math.max(0, nominalCorpus);
+                }
+                
+                const years = Math.floor(periods / withdrawalFrequency);
+                const remainingPeriods = periods % withdrawalFrequency;
+                const frequencyText = { 12: 'month(s)', 4: 'quarter(s)', 2: 'half-year(s)', 1: 'year(s)' }[withdrawalFrequency];
+
+                incomeResult.innerHTML = `
+                    <h3 class="font-bold mb-2 text-xl">Corpus Longevity</h3>
+                    ${strategy === 'sustained' ? 
+                        `<p class="text-sm">To sustain withdrawals for ${sustainedYears} years, you can withdraw:</p>
+                         <p class="text-2xl font-bold text-green-700">${formatCurrency(withdrawalAmount)} per period</p>` :
+                        `<p class="text-sm">Your corpus can provide a ${formatCurrency(withdrawalAmount)} withdrawal for:</p>
+                         <p class="text-2xl font-bold text-green-700">${years} years and ${remainingPeriods} ${frequencyText}</p>`
+                    }
+                    ${periods >= maxSimulationPeriods ? `<p class="error">Your corpus can support this withdrawal amount indefinitely.</p>` : ''}
+                    <p class="mt-4 text-sm">Remaining corpus after this period: <span class="text-lg font-bold">${formatCurrency(finalCorpus)}</span></p>
+                `;
+
+                // Update chart to include withdrawal phase
+                const initialHistory = corpusChart.data.datasets[0].data;
+                const initialRealHistory = corpusChart.data.datasets[1].data;
+                const initialLabels = corpusChart.data.labels;
+                const extendedLabels = [...initialLabels];
+                const extendedNominalData = [...initialHistory];
+                const extendedRealData = [...initialRealHistory];
+                
+                for (let i = 0; i < corpusHistoryNominal.length; i++) {
+                    extendedLabels.push(parseFloat(investmentYearsInput.value) + yearsLabels[i]);
+                    extendedNominalData.push(corpusHistoryNominal[i]);
+                    extendedRealData.push(corpusHistoryReal[i]);
+                }
+
+                corpusChart.data.labels = extendedLabels;
+                corpusChart.data.datasets[0].data = extendedNominalData;
+                corpusChart.data.datasets[1].data = extendedRealData;
+                corpusChart.update();
+            });
+            
+            // Initial state setup on page load
+            document.querySelectorAll('#incomeSection input, #incomeSection select, #incomeSection button').forEach(el => {
+                el.classList.add('disabled-input');
+                el.disabled = true;
+            });
+            withdrawalStrategySelect.addEventListener('change', () => {
+                const strategy = withdrawalStrategySelect.value;
+                if (strategy === 'sustained') {
+                    fixedWithdrawalGroup.classList.add('hidden');
+                    sustainedYearsGroup.classList.remove('hidden');
+                    sustainedYearsGroup.classList.add('flex');
+                } else {
+                    fixedWithdrawalGroup.classList.remove('hidden');
+                    sustainedYearsGroup.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
