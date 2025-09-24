@@ -3,40 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Financial Calculator</title>
+    <title>Financial Calculator</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #121212;
-            color: white;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #f3f4f6;
+            color: #1f2937;
         }
         .calculator-card {
-            background-color: #1e1e1e;
+            background-color: white;
             padding: 2.5rem;
             border-radius: 1.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
-            max-width: 40rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            max-width: 38rem; /* Reverted max-width to a single column design */
             margin: 2rem auto;
-            border: 1px solid #2d2d2d;
+            border: 1px solid #e5e7eb;
+        }
+        .input-card {
+            background-color: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .input-card:hover {
+            border-color: #E34037;
+            box-shadow: 0 0 0 1px #FCA5A5;
         }
         .input-group label {
             font-weight: 500;
-            color: #d1d5db;
+            color: #4b5563;
         }
-        .input-group input {
-            border: 1px solid #4b5563;
-            background-color: #2d2d2d;
-            color: white;
+        .input-group input[type="number"] {
+            border: 1px solid #d1d5db;
+            background-color: white;
+            color: #1f2937;
             border-radius: 0.75rem;
             padding: 0.75rem;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .input-group input:focus {
+        .input-group input[type="number"]:focus {
             outline: none;
             border-color: #E34037;
             box-shadow: 0 0 0 2px rgba(227, 64, 55, 0.5);
@@ -54,17 +67,18 @@
             background-color: #bb2c22;
         }
         .btn-toggle {
-            background-color: #2d2d2d;
-            color: #d1d5db;
+            background-color: #EFEFEF;
+            color: #6B7280;
         }
         .btn-toggle.active {
             background-color: #E34037;
             color: white;
+            box-shadow: 0 2px 4px rgba(227, 64, 55, 0.2);
         }
         .result-box {
-            background-color: #2d2d2d;
-            border: 1px solid #4b5563;
-            color: white;
+            background-color: #f9fafb;
+            border: 1px solid #fecaca;
+            color: #1e40af;
             padding: 1rem;
             border-radius: 0.75rem;
             margin-top: 1.5rem;
@@ -78,144 +92,220 @@
         }
         .disabled-input {
             cursor: not-allowed;
-            background-color: #2d2d2d;
+            background-color: #e5e7eb;
         }
         .error {
             color: #ef4444;
             font-weight: 500;
+        }
+        /* Custom slider styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(to right, #E34037 var(--fill-percentage, 0%), #e5e7eb var(--fill-percentage, 0%));
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #E34037;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 0 3px rgba(227, 64, 55, 0.3);
+            transition: background 0.2s;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #E34037;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .pill-toggle-container {
+            display: flex;
+            padding: 0.25rem;
+            border-radius: 9999px;
+            background-color: #fecaca;
+            border: 1px solid #fca5a5;
+        }
+        .pill-toggle-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            transition: background-color 0.2s, color 0.2s;
+            cursor: pointer;
+            text-align: center;
+        }
+        .pill-toggle-btn.active {
+            background-color: #E34037;
+            color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
         }
     </style>
 </head>
 <body class="p-4">
 
     <div class="text-center my-8">
-        <h1>Advanced Financial Calculator</h1>
-        <p class="mt-2 text-lg text-gray-400">Plan your investments and retirement with advanced analysis.</p>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800">Financial Calculator</h1>
+        <p class="mt-2 text-lg text-gray-500">Plan your investments and retirement with advanced analysis.</p>
     </div>
 
     <!-- Unified Calculator -->
     <div class="calculator-card">
-        <div class="flex justify-center mb-6 space-x-2">
-            <button id="lumpsumToggleBtn" class="btn-toggle active flex-1">Lump-Sum</button>
-            <button id="sipToggleBtn" class="btn-toggle flex-1">SIP</button>
-            <button id="fdToggleBtn" class="btn-toggle flex-1">FD</button>
+        <div class="flex justify-center mb-6">
+             <div class="pill-toggle-container">
+                <button id="lumpsumToggleBtn" class="pill-toggle-btn active">Lump-Sum</button>
+                <button id="sipToggleBtn" class="pill-toggle-btn">SIP</button>
+                <button id="fdToggleBtn" class="pill-toggle-btn">FD</button>
+            </div>
         </div>
 
-        <h2 id="calculatorTitle" class="text-2xl font-semibold text-gray-200 mb-6 text-center">Lump-Sum Investment</h2>
+        <h2 id="calculatorTitle" class="text-2xl font-semibold text-gray-800 mb-6 text-center">Lump-Sum Investment</h2>
         
-        <div class="space-y-4">
-            <!-- Step 1 Inputs (Accumulation) -->
-            <h3 class="text-lg font-semibold text-gray-400">Step 1: Calculate Your Future Corpus</h3>
-            <div class="input-group flex flex-col">
-                <label id="mainAmountLabel" for="mainAmount" class="mb-1">Lump-Sum Amount:</label>
-                <input type="number" id="mainAmount" placeholder="e.g., 100000" class="w-full rounded-xl p-2">
-            </div>
-
-            <div class="input-group flex flex-col">
-                <label for="investmentYears" class="mb-1">Investment Period (Years):</label>
-                <input type="number" id="investmentYears" placeholder="e.g., 10" class="w-full rounded-xl p-2">
-            </div>
-
-            <div class="input-group flex flex-col">
-                <label for="annualRate" class="mb-1">Expected Annual Return (%):</label>
-                <input type="number" id="annualRate" placeholder="e.g., 12" class="w-full rounded-xl p-2">
-                <div class="flex justify-between mt-2 space-x-2">
-                    <button data-rate="14" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Equity (14%)</button>
-                    <button data-rate="10" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Hybrid (10%)</button>
-                    <button data-rate="7" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Debt (7%)</button>
+        <div class="flex flex-col gap-6">
+            <!-- Top Section: Step 1 Inputs -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-700">Step 1: Calculate Your Future Corpus</h3>
+                
+                <div class="input-card flex flex-col">
+                    <label id="mainAmountLabel" for="mainAmountInput" class="mb-1">Lump-Sum Amount (₹):</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="number" id="mainAmountInput" placeholder="e.g., 100000" class="flex-1 rounded-xl p-2">
+                        <input type="range" id="mainAmountSlider" min="1000" max="10000000" step="1000" value="100000" class="flex-1">
+                    </div>
                 </div>
+
+                <div class="input-card flex flex-col">
+                    <label for="investmentYearsInput" class="mb-1">Investment Period (Years):</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="number" id="investmentYearsInput" placeholder="e.g., 10" class="flex-1 rounded-xl p-2">
+                        <input type="range" id="investmentYearsSlider" min="1" max="50" step="1" value="10" class="flex-1">
+                    </div>
+                </div>
+
+                <div class="input-card flex flex-col">
+                    <label for="annualRateInput" class="mb-1">Expected Annual Return (%):</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="number" id="annualRateInput" placeholder="e.g., 12" class="flex-1 rounded-xl p-2">
+                        <input type="range" id="annualRateSlider" min="1" max="30" step="0.1" value="12" class="flex-1">
+                    </div>
+                    <div class="flex justify-between mt-2 space-x-2">
+                        <button data-rate="14" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Equity (14%)</button>
+                        <button data-rate="10" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Hybrid (10%)</button>
+                        <button data-rate="7" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Debt (7%)</button>
+                    </div>
+                </div>
+
+                <div class="input-card flex flex-col">
+                    <label for="inflationRateInput" class="mb-1">Expected Annual Inflation Rate (%):</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="number" id="inflationRateInput" placeholder="e.g., 6" class="flex-1 rounded-xl p-2">
+                        <input type="range" id="inflationRateSlider" min="0" max="15" step="0.1" value="6" class="flex-1">
+                    </div>
+                </div>
+
+                <div class="input-card flex flex-col">
+                    <label for="taxRateInput" class="mb-1">Tax Rate (%):</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="number" id="taxRateInput" placeholder="e.g., 10" class="flex-1 rounded-xl p-2">
+                        <input type="range" id="taxRateSlider" min="0" max="50" step="1" value="10" class="flex-1">
+                    </div>
+                </div>
+                <button id="calculateCorpusBtn" class="btn-primary w-full mt-6">Calculate Corpus</button>
             </div>
 
-            <div class="input-group flex flex-col">
-                <label for="inflationRate" class="mb-1">Expected Annual Inflation Rate (%):</label>
-                <input type="number" id="inflationRate" placeholder="e.g., 6" class="w-full rounded-xl p-2">
-            </div>
+            <!-- Bottom Section: Results and Step 2 Inputs -->
+            <div class="space-y-4">
+                 <div id="resultBox" class="result-box hidden">
+                    <!-- Step 1 Result -->
+                    <div id="corpusResult" class="mb-4 text-gray-800"></div>
+                    
+                    <!-- Chart Container -->
+                    <div class="w-full mb-6">
+                        <canvas id="corpusChart"></canvas>
+                    </div>
 
-            <div class="input-group flex flex-col">
-                <label for="taxRate" class="mb-1">Tax Rate (%):</label>
-                <input type="number" id="taxRate" placeholder="e.g., 10" class="w-full rounded-xl p-2">
+                    <!-- Step 2 Inputs (Faded by default) -->
+                    <div id="incomeSection" class="faded">
+                        <hr class="my-4 border-gray-300">
+                        <h3 class="text-lg font-semibold text-gray-700">Step 2: Fixed Income Analysis</h3>
+                        <div class="space-y-4 mt-4">
+                            <div class="input-card flex flex-col mb-4">
+                                <label for="withdrawalStrategy" class="mb-1">Withdrawal Strategy:</label>
+                                <select id="withdrawalStrategy" class="w-full p-2 border border-gray-300 rounded-xl disabled-input">
+                                    <option value="fixed">Fixed Withdrawal</option>
+                                    <option value="increasing">Increasing Withdrawal (with Inflation)</option>
+                                    <option value="sustained">Sustained Withdrawal (for X years)</option>
+                                </select>
+                            </div>
+
+                            <div id="fixedWithdrawalGroup" class="input-card flex flex-col mb-4">
+                                <label for="withdrawalAmount" class="mb-1">Desired Withdrawal Amount:</label>
+                                <input type="number" id="withdrawalAmount" placeholder="e.g., 50000" class="w-full disabled-input rounded-xl p-2">
+                            </div>
+
+                            <div id="sustainedYearsGroup" class="input-card flex-col mb-4 hidden">
+                                <label for="sustainedYears" class="mb-1">Withdrawal Period (Years):</label>
+                                <input type="number" id="sustainedYears" placeholder="e.g., 20" class="w-full disabled-input rounded-xl p-2">
+                            </div>
+
+                            <div class="input-card flex flex-col mb-4">
+                                <label for="incomeFrequency" class="mb-1">Withdrawal Frequency:</label>
+                                <select id="incomeFrequency" class="w-full p-2 border border-gray-300 rounded-xl disabled-input">
+                                    <option value="12">Monthly</option>
+                                    <option value="4">Quarterly</option>
+                                    <option value="2">Half-Yearly</option>
+                                    <option value="1">Yearly</option>
+                                </select>
+                            </div>
+
+                            <button id="calculateFixedIncomeBtn" class="btn-primary w-full disabled-input">Calculate Longevity</button>
+                            <div id="incomeResult" class="mt-4 text-gray-800"></div>
+                        </div>
+                    </div>
+                </div>
+                <button id="resetBtn" class="btn-primary w-full mt-6 hidden">Reset Calculator</button>
             </div>
         </div>
-
-        <button id="calculateCorpusBtn" class="btn-primary w-full mt-6">Calculate Corpus</button>
-
-        <!-- Result Box and Step 2 (Fixed Income) -->
-        <div id="resultBox" class="result-box hidden">
-            <!-- Step 1 Result -->
-            <div id="corpusResult" class="mb-4"></div>
-            
-            <!-- Chart Container -->
-            <div class="w-full mb-6">
-                <canvas id="corpusChart"></canvas>
-            </div>
-
-            <!-- Step 2 Inputs (Faded by default) -->
-            <div id="incomeSection" class="faded">
-                <hr class="my-4 border-gray-600">
-                <h3 class="text-lg font-semibold text-gray-400">Step 2: Fixed Income Analysis</h3>
-                <div class="space-y-4 mt-4">
-                    <div class="input-group flex flex-col mb-4">
-                        <label for="withdrawalStrategy" class="mb-1">Withdrawal Strategy:</label>
-                        <select id="withdrawalStrategy" class="w-full p-2 border border-gray-600 rounded-xl disabled-input">
-                            <option value="fixed">Fixed Withdrawal</option>
-                            <option value="increasing">Increasing Withdrawal (with Inflation)</option>
-                            <option value="sustained">Sustained Withdrawal (for X years)</option>
-                        </select>
-                    </div>
-
-                    <div id="fixedWithdrawalGroup" class="input-group flex flex-col mb-4">
-                        <label for="withdrawalAmount" class="mb-1">Desired Withdrawal Amount:</label>
-                        <input type="number" id="withdrawalAmount" placeholder="e.g., 50000" class="w-full disabled-input rounded-xl p-2">
-                    </div>
-
-                    <div id="sustainedYearsGroup" class="input-group flex-col mb-4 hidden">
-                        <label for="sustainedYears" class="mb-1">Withdrawal Period (Years):</label>
-                        <input type="number" id="sustainedYears" placeholder="e.g., 20" class="w-full disabled-input rounded-xl p-2">
-                    </div>
-
-                    <div class="input-group flex flex-col mb-4">
-                        <label for="incomeFrequency" class="mb-1">Withdrawal Frequency:</label>
-                        <select id="incomeFrequency" class="w-full p-2 border border-gray-600 rounded-xl disabled-input">
-                            <option value="12">Monthly</option>
-                            <option value="4">Quarterly</option>
-                            <option value="2">Half-Yearly</option>
-                            <option value="1">Yearly</option>
-                        </select>
-                    </div>
-
-                    <button id="calculateFixedIncomeBtn" class="btn-primary w-full disabled-input">Calculate Longevity</button>
-                    <div id="incomeResult" class="mt-4"></div>
-                </div>
-            </div>
-        </div>
-        <button id="resetBtn" class="btn-primary w-full mt-6 hidden">Reset Calculator</button>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const lumpsumToggleBtn = document.getElementById('lumpsumToggleBtn');
-            const sipToggleBtn = document.getElementById('sipToggleBtn');
-            const fdToggleBtn = document.getElementById('fdToggleBtn');
-            const calculatorTitle = document.getElementById('calculatorTitle');
-            const mainAmountLabel = document.getElementById('mainAmountLabel');
-            const mainAmountInput = document.getElementById('mainAmount');
-            const investmentYearsInput = document.getElementById('investmentYears');
-            const annualRateInput = document.getElementById('annualRate');
-            const inflationRateInput = document.getElementById('inflationRate');
-            const taxRateInput = document.getElementById('taxRate');
-            const calculateCorpusBtn = document.getElementById('calculateCorpusBtn');
-            const calculateFixedIncomeBtn = document.getElementById('calculateFixedIncomeBtn');
-            const withdrawalStrategySelect = document.getElementById('withdrawalStrategy');
-            const fixedWithdrawalGroup = document.getElementById('fixedWithdrawalGroup');
-            const sustainedYearsGroup = document.getElementById('sustainedYearsGroup');
-            const withdrawalAmountInput = document.getElementById('withdrawalAmount');
-            const sustainedYearsInput = document.getElementById('sustainedYears');
-            const incomeFrequencySelect = document.getElementById('incomeFrequency');
-            const resultBox = document.getElementById('resultBox');
-            const corpusResult = document.getElementById('corpusResult');
-            const incomeSection = document.getElementById('incomeSection');
-            const incomeResult = document.getElementById('incomeResult');
-            const resetBtn = document.getElementById('resetBtn');
+            const getElem = (id) => document.getElementById(id);
+            const lumpsumToggleBtn = getElem('lumpsumToggleBtn');
+            const sipToggleBtn = getElem('sipToggleBtn');
+            const fdToggleBtn = getElem('fdToggleBtn');
+            const calculatorTitle = getElem('calculatorTitle');
+            const mainAmountLabel = getElem('mainAmountLabel');
+            const mainAmountInput = getElem('mainAmountInput');
+            const mainAmountSlider = getElem('mainAmountSlider');
+            const investmentYearsInput = getElem('investmentYearsInput');
+            const investmentYearsSlider = getElem('investmentYearsSlider');
+            const annualRateInput = getElem('annualRateInput');
+            const annualRateSlider = getElem('annualRateSlider');
+            const inflationRateInput = getElem('inflationRateInput');
+            const inflationRateSlider = getElem('inflationRateSlider');
+            const taxRateInput = getElem('taxRateInput');
+            const taxRateSlider = getElem('taxRateSlider');
+            const calculateCorpusBtn = getElem('calculateCorpusBtn');
+            const calculateFixedIncomeBtn = getElem('calculateFixedIncomeBtn');
+            const withdrawalStrategySelect = getElem('withdrawalStrategy');
+            const fixedWithdrawalGroup = getElem('fixedWithdrawalGroup');
+            const sustainedYearsGroup = getElem('sustainedYearsGroup');
+            const withdrawalAmountInput = getElem('withdrawalAmount');
+            const sustainedYearsInput = getElem('sustainedYears');
+            const incomeFrequencySelect = getElem('incomeFrequency');
+            const resultBox = getElem('resultBox');
+            const corpusResult = getElem('corpusResult');
+            const incomeSection = getElem('incomeSection');
+            const incomeResult = getElem('incomeResult');
+            const resetBtn = getElem('resetBtn');
 
             let isLumpsumMode = true;
             let isSipMode = false;
@@ -229,9 +319,34 @@
                 minimumFractionDigits: 0
             }).format(amount);
 
+            // Function to sync input and slider
+            const syncInputs = (input, slider) => {
+                const updateSliderFill = () => {
+                    const percentage = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+                    slider.style.setProperty('--fill-percentage', `${percentage}%`);
+                };
+
+                input.addEventListener('input', (e) => {
+                    slider.value = e.target.value;
+                    updateSliderFill();
+                });
+                slider.addEventListener('input', (e) => {
+                    input.value = e.target.value;
+                    updateSliderFill();
+                });
+                // Initial update
+                updateSliderFill();
+            };
+
+            syncInputs(mainAmountInput, mainAmountSlider);
+            syncInputs(investmentYearsInput, investmentYearsSlider);
+            syncInputs(annualRateInput, annualRateSlider);
+            syncInputs(inflationRateInput, inflationRateSlider);
+            syncInputs(taxRateInput, taxRateSlider);
+
             // Chart setup
             const setupChart = (data) => {
-                const ctx = document.getElementById('corpusChart').getContext('2d');
+                const ctx = getElem('corpusChart').getContext('2d');
                 if (corpusChart) {
                     corpusChart.destroy();
                 }
@@ -265,7 +380,7 @@
                                 title: {
                                     display: true,
                                     text: 'Years',
-                                    color: '#d1d5db'
+                                    color: '#6B7280'
                                 },
                                 ticks: {
                                     color: '#9ca3af'
@@ -275,18 +390,21 @@
                                 title: {
                                     display: true,
                                     text: 'Corpus Value',
-                                    color: '#d1d5db'
+                                    color: '#6B7280'
                                 },
                                 beginAtZero: true,
                                 ticks: {
-                                    color: '#9ca3af'
+                                    color: '#9ca3af',
+                                    callback: function(value) {
+                                        return formatCurrency(value);
+                                    }
                                 }
                             }
                         },
                         plugins: {
                             legend: {
                                 labels: {
-                                    color: '#d1d5db'
+                                    color: '#4B5563'
                                 }
                             }
                         }
@@ -304,7 +422,7 @@
                 fdToggleBtn.classList.toggle('active', isFdMode);
 
                 calculatorTitle.textContent = isLumpsumMode ? 'Lump-Sum Investment' : isSipMode ? 'SIP to Fixed Income' : 'Fixed Deposit (FD)';
-                mainAmountLabel.textContent = isSipMode ? 'Monthly SIP Amount:' : 'Lump-Sum Amount:';
+                mainAmountLabel.textContent = isSipMode ? 'Monthly SIP Amount (₹):' : 'Lump-Sum Amount (₹):';
                 mainAmountInput.placeholder = isSipMode ? 'e.g., 5000' : 'e.g., 100000';
                 
                 resetUI();
@@ -327,11 +445,16 @@
             };
 
             const resetAll = () => {
-                mainAmountInput.value = '';
-                investmentYearsInput.value = '';
-                annualRateInput.value = '';
-                inflationRateInput.value = '';
-                taxRateInput.value = '';
+                mainAmountInput.value = mainAmountSlider.defaultValue;
+                syncInputs(mainAmountInput, mainAmountSlider);
+                investmentYearsInput.value = investmentYearsSlider.defaultValue;
+                syncInputs(investmentYearsInput, investmentYearsSlider);
+                annualRateInput.value = annualRateSlider.defaultValue;
+                syncInputs(annualRateInput, annualRateSlider);
+                inflationRateInput.value = inflationRateSlider.defaultValue;
+                syncInputs(inflationRateInput, inflationRateSlider);
+                taxRateInput.value = taxRateSlider.defaultValue;
+                syncInputs(taxRateInput, taxRateSlider);
                 withdrawalAmountInput.value = '';
                 sustainedYearsInput.value = '';
                 withdrawalStrategySelect.value = 'fixed';
@@ -349,6 +472,7 @@
             document.querySelectorAll('.btn-rate').forEach(button => {
                 button.addEventListener('click', (e) => {
                     annualRateInput.value = e.target.getAttribute('data-rate');
+                    syncInputs(annualRateInput, annualRateSlider);
                 });
             });
 
@@ -357,7 +481,7 @@
                 const strategy = e.target.value;
                 if (strategy === 'sustained') {
                     fixedWithdrawalGroup.classList.add('hidden');
-                    sustainedYearsGroup.classList.remove('flex');
+                    sustainedYearsGroup.classList.remove('hidden');
                     sustainedYearsGroup.classList.add('flex');
                 } else {
                     fixedWithdrawalGroup.classList.remove('hidden');
@@ -439,8 +563,8 @@
                     <p class="text-sm">Total Invested: <span class="font-bold">${formatCurrency(totalInvested)}</span></p>
                     <p class="text-sm">Total Returns: <span class="font-bold text-green-700">${formatCurrency(totalReturns)}</span></p>
                     <p class="text-sm">Taxes Paid: <span class="font-bold text-red-600">${formatCurrency(taxPaid)}</span></p>
-                    <hr class="my-2 border-gray-600">
-                    <p class="mt-2 text-sm">Estimated Corpus after ${investmentYears} years: <span class="text-2xl font-bold">${formatCurrency(afterTaxFutureValue)}</span></p>
+                    <hr class="my-2 border-gray-300">
+                    <p class="mt-2 text-sm">Estimated Corpus after ${investmentYears} years: <span class="text-2xl font-bold text-red-600">${formatCurrency(afterTaxFutureValue)}</span></p>
                     <p class="text-sm">(Inflation-Adjusted: <span class="font-bold text-green-700">${formatCurrency(realFutureValue)}</span>)</p>
                 `;
 
