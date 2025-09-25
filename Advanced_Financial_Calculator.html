@@ -377,29 +377,39 @@
                     <div id="incomeSection" class="faded">
                         <hr class="my-4 border-gray-300">
                         <h3 class="text-lg font-semibold text-gray-700">Step 2: Plan Your Withdrawals</h3>
+
+                        <div class="flex justify-center my-4">
+                            <div class="pill-toggle-container">
+                               <button id="longevityToggleBtn" class="pill-toggle-btn active">Calculate Longevity</button>
+                               <button id="amountToggleBtn" class="pill-toggle-btn">Calculate Withdrawal</button>
+                           </div>
+                       </div>
+
                         <div class="space-y-2 mt-4">
-                            <div class="input-card flex flex-col mb-4">
-                                <label for="withdrawalStrategy" class="mb-1">Withdrawal Strategy:</label>
-                                <select id="withdrawalStrategy" class="w-full disabled-input">
-                                    <option value="fixed">Fixed Withdrawal</option>
-                                    <option value="increasing">Increasing Withdrawal (with Inflation)</option>
-                                    <option value="sustained">Sustained Withdrawal (for X years)</option>
-                                </select>
+                            <div id="longevityInputs">
+                                <div class="input-card flex flex-col mb-4">
+                                    <label for="withdrawalAmount" class="mb-1">Desired Withdrawal Amount:</label>
+                                    <input type="number" id="withdrawalAmount" placeholder="e.g., 50000" class="w-full">
+                                </div>
+                                <div class="input-card flex items-center justify-between mb-4 p-3">
+                                     <label for="increasingToggle" class="mb-0">Increase withdrawals with inflation?</label>
+                                     <label class="toggle-switch">
+                                         <input type="checkbox" id="increasingToggle">
+                                         <span class="toggle-slider"></span>
+                                     </label>
+                                </div>
                             </div>
 
-                            <div id="fixedWithdrawalGroup" class="input-card flex flex-col mb-4">
-                                <label for="withdrawalAmount" class="mb-1">How much to withdraw?</label>
-                                <input type="number" id="withdrawalAmount" placeholder="e.g., 50000" class="w-full disabled-input">
-                            </div>
-
-                            <div id="sustainedYearsGroup" class="input-card flex-col mb-4 hidden">
-                                <label for="sustainedYears" class="mb-1">Withdrawal Period (Years):</label>
-                                <input type="number" id="sustainedYears" placeholder="e.g., 20" class="w-full disabled-input">
+                            <div id="amountInputs" class="hidden">
+                                <div class="input-card flex flex-col mb-4">
+                                    <label for="sustainedYears" class="mb-1">Withdraw For How Many Years?</label>
+                                    <input type="number" id="sustainedYears" placeholder="e.g., 20" class="w-full">
+                                </div>
                             </div>
 
                             <div class="input-card flex flex-col mb-4">
                                 <label for="incomeFrequency" class="mb-1">Withdrawal Frequency:</label>
-                                <select id="incomeFrequency" class="w-full disabled-input">
+                                <select id="incomeFrequency" class="w-full">
                                     <option value="12">Monthly</option>
                                     <option value="4">Quarterly</option>
                                     <option value="2">Half-Yearly</option>
@@ -407,7 +417,7 @@
                                 </select>
                             </div>
 
-                            <button id="calculateFixedIncomeBtn" class="btn-primary w-full disabled-input">How Long Will It Last?</button>
+                            <button id="calculateFixedIncomeBtn" class="btn-primary w-full">Calculate</button>
                             <div id="incomeResult" class="mt-4 text-gray-800"></div>
                         </div>
                     </div>
@@ -443,12 +453,17 @@
             const taxHeader = getElem('taxHeader');
             const calculateCorpusBtn = getElem('calculateCorpusBtn');
             const calculateFixedIncomeBtn = getElem('calculateFixedIncomeBtn');
-            const withdrawalStrategySelect = getElem('withdrawalStrategy');
-            const fixedWithdrawalGroup = getElem('fixedWithdrawalGroup');
-            const sustainedYearsGroup = getElem('sustainedYearsGroup');
+            
+            // Withdrawal Section Elements
+            const longevityToggleBtn = getElem('longevityToggleBtn');
+            const amountToggleBtn = getElem('amountToggleBtn');
+            const longevityInputs = getElem('longevityInputs');
+            const amountInputs = getElem('amountInputs');
+            const increasingToggle = getElem('increasingToggle');
             const withdrawalAmountInput = getElem('withdrawalAmount');
             const sustainedYearsInput = getElem('sustainedYears');
             const incomeFrequencySelect = getElem('incomeFrequency');
+
             const resultBox = getElem('resultBox');
             const corpusResult = getElem('corpusResult');
             const incomeSection = getElem('incomeSection');
@@ -459,6 +474,7 @@
             let isSipMode = false;
             let isFdMode = false;
             let futureValue = 0;
+            let withdrawalMode = 'longevity'; // 'longevity' or 'amount'
             let corpusChart;
             let corpusBreakdownChart;
             let withdrawalChart;
@@ -609,7 +625,9 @@
             };
 
             const setupWithdrawalChart = (chartData) => {
-                const ctx = getElem('withdrawalChart').getContext('2d');
+                const canvas = getElem('withdrawalChart');
+                if (!canvas) return; // Prevent error if canvas not found
+                const ctx = canvas.getContext('2d');
                 if (withdrawalChart) {
                     withdrawalChart.destroy();
                 }
@@ -657,10 +675,32 @@
                 sipToggleBtn.classList.toggle('active', isSipMode);
                 fdToggleBtn.classList.toggle('active', isFdMode);
 
-                calculatorTitle.textContent = isLumpsumMode ? 'Lump-Sum Investment' : isSipMode ? 'SIP to Fixed Income' : 'Fixed Deposit (FD)';
-                mainAmountLabel.textContent = isSipMode ? 'Monthly SIP Amount (₹):' : 'Lump-Sum Amount (₹):';
-                mainAmountInput.placeholder = isSipMode ? 'e.g., 5000' : 'e.g., 100000';
-                
+                if (isLumpsumMode) {
+                    calculatorTitle.textContent = 'Lump-Sum Investment';
+                    mainAmountLabel.textContent = 'Lump-Sum Amount (₹):';
+                    mainAmountInput.placeholder = 'e.g., 100000';
+                    mainAmountSlider.max = "100000000"; // 10 Crore
+                    mainAmountInput.max = "100000000";
+                    mainAmountInput.value = "100000";
+                    mainAmountSlider.value = "100000";
+                } else if (isSipMode) {
+                    calculatorTitle.textContent = 'SIP to Fixed Income';
+                    mainAmountLabel.textContent = 'Monthly SIP Amount (₹):';
+                    mainAmountInput.placeholder = 'e.g., 5000';
+                    mainAmountSlider.max = "100000"; // 1 Lakh
+                    mainAmountInput.max = "100000";
+                    mainAmountInput.value = "5000";
+                    mainAmountSlider.value = "5000";
+                } else if (isFdMode) {
+                    calculatorTitle.textContent = 'Fixed Deposit (FD)';
+                    mainAmountLabel.textContent = 'FD Amount (₹):';
+                    mainAmountInput.placeholder = 'e.g., 500000';
+                    mainAmountSlider.max = "50000000"; // 5 Crore
+                    mainAmountInput.max = "50000000";
+                    mainAmountInput.value = "500000";
+                    mainAmountSlider.value = "500000";
+                }
+                syncInputs(mainAmountInput, mainAmountSlider);
                 resetUI();
             };
 
@@ -703,9 +743,7 @@
                 syncInputs(taxRateInput, taxRateSlider);
                 withdrawalAmountInput.value = '';
                 sustainedYearsInput.value = '';
-                withdrawalStrategySelect.value = 'fixed';
-                fixedWithdrawalGroup.classList.remove('hidden');
-                sustainedYearsGroup.classList.add('hidden');
+                toggleWithdrawalMode('longevity');
                 toggleMode('lumpsum');
             };
 
@@ -722,18 +760,25 @@
                 });
             });
 
-            // Handle withdrawal strategy change
-            withdrawalStrategySelect.addEventListener('change', (e) => {
-                const strategy = e.target.value;
-                if (strategy === 'sustained') {
-                    fixedWithdrawalGroup.classList.add('hidden');
-                    sustainedYearsGroup.classList.remove('hidden');
-                    sustainedYearsGroup.classList.add('flex');
+            // Handle Withdrawal Toggles
+            const toggleWithdrawalMode = (mode) => {
+                withdrawalMode = mode;
+                if (mode === 'longevity') {
+                    longevityToggleBtn.classList.add('active');
+                    amountToggleBtn.classList.remove('active');
+                    longevityInputs.classList.remove('hidden');
+                    amountInputs.classList.add('hidden');
                 } else {
-                    fixedWithdrawalGroup.classList.remove('hidden');
-                    sustainedYearsGroup.classList.add('hidden');
+                    longevityToggleBtn.classList.remove('active');
+                    amountToggleBtn.classList.add('active');
+                    longevityInputs.classList.add('hidden');
+                    amountInputs.classList.remove('hidden');
                 }
-            });
+                incomeResult.innerHTML = ''; // Clear previous results
+            }
+            longevityToggleBtn.addEventListener('click', () => toggleWithdrawalMode('longevity'));
+            amountToggleBtn.addEventListener('click', () => toggleWithdrawalMode('amount'));
+
 
             // Handle Inflation Toggle
             const handleInflationToggle = () => {
@@ -892,98 +937,108 @@
                 const inflationRate = inflationToggle.checked ? parseFloat(inflationRateInput.value) / 100 || 0 : 0;
                 const withdrawalFrequency = parseFloat(incomeFrequencySelect.value);
                 const periodicRate = annualRate / withdrawalFrequency;
-                const periodicInflationRate = inflationRate / withdrawalFrequency;
-                const strategy = withdrawalStrategySelect.value;
                 
-                let withdrawalAmount = parseFloat(withdrawalAmountInput.value);
-                let sustainedYears = parseFloat(sustainedYearsInput.value);
+                let resultHTML = '';
+                let chartData = {};
 
-                let periods;
-                let finalCorpus = 0;
-                let currentCorpus = futureValue;
-                const maxSimulationPeriods = 50 * withdrawalFrequency;
+                if (withdrawalMode === 'longevity') {
+                    const withdrawalAmount = parseFloat(withdrawalAmountInput.value);
+                    const isIncreasing = increasingToggle.checked;
 
-                let corpusHistory = [futureValue];
-                let yearLabels = [0];
-
-                if (strategy === 'fixed') {
                     if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) {
                         incomeResult.innerHTML = '<p class="error">Please enter a valid withdrawal amount.</p>'; return;
                     }
-                    periods = 0;
-                    while (currentCorpus > 0 && periods < maxSimulationPeriods) {
-                        currentCorpus = currentCorpus * (1 + periodicRate) - withdrawalAmount;
-                        periods++;
-                        corpusHistory.push(Math.max(0, currentCorpus));
-                        yearLabels.push(periods / withdrawalFrequency);
-                    }
-                    finalCorpus = Math.max(0, currentCorpus);
-                } else if (strategy === 'increasing') {
-                    if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) {
-                        incomeResult.innerHTML = '<p class="error">Please enter a valid initial withdrawal amount.</p>'; return;
-                    }
-                    periods = 0;
+
+                    let periods = 0;
+                    let currentCorpus = futureValue;
+                    const maxSimulationPeriods = 60 * withdrawalFrequency;
+                    let corpusHistory = [futureValue];
+                    let yearLabels = [0];
                     let currentWithdrawal = withdrawalAmount;
+
                     while (currentCorpus > 0 && periods < maxSimulationPeriods) {
-                        currentCorpus = currentCorpus * (1 + periodicRate) - currentWithdrawal;
-                        periods++;
-                        if (periods % withdrawalFrequency === 0) {
-                            currentWithdrawal *= (1 + inflationRate);
+                        currentCorpus = currentCorpus * (1 + periodicRate);
+                        
+                        if(isIncreasing && periods > 0 && periods % withdrawalFrequency === 0) {
+                           currentWithdrawal *= (1 + inflationRate);
                         }
+                        
+                        currentCorpus -= currentWithdrawal;
+                        periods++;
                         corpusHistory.push(Math.max(0, currentCorpus));
                         yearLabels.push(periods / withdrawalFrequency);
                     }
-                    finalCorpus = Math.max(0, currentCorpus);
-                } else if (strategy === 'sustained') {
+                    const finalCorpus = Math.max(0, currentCorpus);
+                    const years = Math.floor(periods / withdrawalFrequency);
+                    const remainingPeriods = periods % withdrawalFrequency;
+                    const frequencyText = { 12: 'month(s)', 4: 'quarter(s)', 2: 'half-year(s)', 1: 'year(s)' }[withdrawalFrequency];
+
+                    resultHTML = `
+                        <h3 class="font-bold mb-4 text-xl text-left">Your Withdrawal Plan</h3>
+                        <div class="grid md:grid-cols-2 gap-4 text-left">
+                            <div class="result-card bg-green-50 border-green-200 p-4 flex flex-col justify-center">
+                                <div class="label"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18M12 12.75h.008v.008H12v-.008z" /></svg>Your Money Will Last For</div>
+                                <div class="value text-3xl text-green-700 mt-2">${periods >= maxSimulationPeriods ? '50+ Years' : `${years} years & ${remainingPeriods} ${frequencyText}`}</div>
+                                ${periods >= maxSimulationPeriods ? `<p class="text-sm text-green-600 mt-1">Your money is projected to last indefinitely at this rate.</p>` : ''}
+                            </div>
+                            <div class="result-card bg-gray-50 border-gray-200 p-4 flex flex-col justify-center">
+                                <div class="label"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 3a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 3V9M3 12V9" /></svg>Remaining Balance</div>
+                                <div class="value text-xl mt-1">${formatCurrency(finalCorpus)}</div>
+                                <p class="text-xs text-gray-500 mt-1">The projected balance after the withdrawal period.</p>
+                            </div>
+                        </div>
+                    `;
+                    chartData = { labels: yearLabels, data: corpusHistory };
+
+                } else if (withdrawalMode === 'amount') {
+                    const sustainedYears = parseFloat(sustainedYearsInput.value);
                     if (isNaN(sustainedYears) || sustainedYears <= 0) {
                         incomeResult.innerHTML = '<p class="error">Please enter a valid withdrawal period in years.</p>'; return;
                     }
-                    periods = sustainedYears * withdrawalFrequency;
-                    withdrawalAmount = (periodicRate === 0) ? futureValue / periods : (futureValue * periodicRate) / (1 - Math.pow(1 + periodicRate, -periods));
                     
+                    const periods = sustainedYears * withdrawalFrequency;
+                    const withdrawalAmount = (periodicRate === 0) ? futureValue / periods : (futureValue * periodicRate) / (1 - Math.pow(1 + periodicRate, -periods));
+
+                    let corpusHistory = [futureValue];
+                    let yearLabels = [0];
                     let corpusForChart = futureValue;
                     for (let i = 1; i <= periods; i++) {
                          corpusForChart = corpusForChart * (1 + periodicRate) - withdrawalAmount;
                          corpusHistory.push(Math.max(0, corpusForChart));
                          yearLabels.push(i / withdrawalFrequency);
                     }
-                    finalCorpus = Math.max(0, corpusForChart);
+                    const finalCorpus = Math.max(0, corpusForChart);
+                    const frequencyTextSingular = { 12: 'month', 4: 'quarter', 2: 'half-year', 1: 'year' }[withdrawalFrequency];
+
+                     resultHTML = `
+                        <h3 class="font-bold mb-4 text-xl text-left">Your Withdrawal Plan</h3>
+                        <div class="grid md:grid-cols-2 gap-4 text-left">
+                            <div class="result-card bg-blue-50 border-blue-200 p-4 flex flex-col justify-center">
+                                <div class="label"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15A2.25 2.25 0 002.25 6.75v10.5A2.25 2.25 0 004.5 19.5z" /></svg>You Can Withdraw</div>
+                                <div class="value text-3xl text-blue-700 mt-2">${formatCurrency(withdrawalAmount)}</div>
+                                <p class="text-sm text-gray-600 mt-1">per ${frequencyTextSingular}, for ${sustainedYears} years.</p>
+                            </div>
+                            <div class="result-card bg-gray-50 border-gray-200 p-4 flex flex-col justify-center">
+                                 <div class="label"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 3a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 3V9M3 12V9" /></svg>Remaining Balance</div>
+                                 <div class="value text-xl mt-1">${formatCurrency(finalCorpus)}</div>
+                                 <p class="text-xs text-gray-500 mt-1">The projected balance after ${sustainedYears} years.</p>
+                            </div>
+                        </div>
+                    `;
+                    chartData = { labels: yearLabels, data: corpusHistory };
                 }
-                
-                const years = Math.floor(periods / withdrawalFrequency);
-                const remainingPeriods = periods % withdrawalFrequency;
-                const frequencyText = { 12: 'month(s)', 4: 'quarter(s)', 2: 'half-year(s)', 1: 'year(s)' }[withdrawalFrequency];
-                const frequencyTextSingular = { 12: 'month', 4: 'quarter', 2: 'half-year', 1: 'year' }[withdrawalFrequency];
-
-
-                const resultHTML = `
-                    <h3 class="font-bold mb-4 text-xl text-left">Your Withdrawal Plan</h3>
-                    <div class="grid md:grid-cols-2 gap-4 text-left">
-                        <div class="result-card bg-green-50 border-green-200 p-4 flex flex-col justify-center">
-                            <div class="label"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18M12 12.75h.008v.008H12v-.008z" /></svg>Your Money Will Last For</div>
-                            ${strategy === 'sustained' ? 
-                                `<div class="value text-3xl text-green-700 mt-2">${sustainedYears} Years</div>
-                                 <p class="text-sm text-gray-600 mt-1">With a fixed withdrawal of ${formatCurrency(withdrawalAmount)} per ${frequencyTextSingular}.</p>` :
-                                `<div class="value text-3xl text-green-700 mt-2">${years} years & ${remainingPeriods} ${frequencyText}</div>
-                                 ${periods >= maxSimulationPeriods ? `<p class="text-sm text-green-600 mt-1">Your money is projected to last indefinitely at this rate.</p>` : ''}`
-                            }
-                        </div>
-                        <div class="result-card bg-gray-50 border-gray-200 p-4 flex flex-col justify-center">
-                             <div class="label"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0l.879-.659M7.5 12l.879.659c1.171.879 3.07.879 4.242 0l.879-.659M12 18.75h.008v.008H12v-.008z" /></svg>Remaining Balance</div>
-                             <div class="value text-xl mt-1">${formatCurrency(finalCorpus)}</div>
-                             <p class="text-xs text-gray-500 mt-1">The projected balance after the withdrawal period.</p>
-                        </div>
-                    </div>
+               
+                incomeResult.innerHTML = resultHTML + `
                     <div class="mt-6">
                         <h3 class="font-semibold text-lg text-gray-700 mb-2 text-left">Corpus Depletion Over Time</h3>
                         <div class="w-full h-64 bg-white rounded-lg p-2 border">
                             <canvas id="withdrawalChart"></canvas>
                         </div>
-                    </div>
-                `;
+                    </div>`;
 
-                incomeResult.innerHTML = resultHTML;
-                setupWithdrawalChart({ labels: yearLabels, data: corpusHistory });
+                 if (chartData.labels && chartData.data) {
+                    setupWithdrawalChart(chartData);
+                 }
             });
             
             // Initial state setup
