@@ -41,15 +41,15 @@
             font-weight: 500;
             color: #4b5563;
         }
-        .input-group input[type="number"] {
-            border: 1px solid #d1d5db;
+        .input-card input[type="number"], .input-card select {
+            border: 1px solid #E34037;
             background-color: white;
             color: #1f2937;
             border-radius: 0.75rem;
             padding: 0.75rem;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .input-group input[type="number"]:focus {
+        .input-card input[type="number"]:focus, .input-card select:focus {
             outline: none;
             border-color: #E34037;
             box-shadow: 0 0 0 2px rgba(227, 64, 55, 0.5);
@@ -141,6 +141,7 @@
             transition: background-color 0.2s, color 0.2s;
             cursor: pointer;
             text-align: center;
+            margin: 0 4px;
         }
         .pill-toggle-btn.active {
             background-color: #E34037;
@@ -176,24 +177,24 @@
                 <div class="input-card flex flex-col">
                     <label id="mainAmountLabel" for="mainAmountInput" class="mb-1">Lump-Sum Amount (₹):</label>
                     <div class="flex items-center space-x-2">
-                        <input type="number" id="mainAmountInput" placeholder="e.g., 100000" class="flex-1 rounded-xl p-2">
                         <input type="range" id="mainAmountSlider" min="1000" max="10000000" step="1000" value="100000" class="flex-1">
+                        <input type="number" id="mainAmountInput" placeholder="e.g., 100000" class="w-2/5">
                     </div>
                 </div>
 
                 <div class="input-card flex flex-col">
                     <label for="investmentYearsInput" class="mb-1">Investment Period (Years):</label>
                     <div class="flex items-center space-x-2">
-                        <input type="number" id="investmentYearsInput" placeholder="e.g., 10" class="flex-1 rounded-xl p-2">
                         <input type="range" id="investmentYearsSlider" min="1" max="50" step="1" value="10" class="flex-1">
+                        <input type="number" id="investmentYearsInput" placeholder="e.g., 10" class="w-2/5">
                     </div>
                 </div>
 
                 <div class="input-card flex flex-col">
                     <label for="annualRateInput" class="mb-1">Expected Annual Return (%):</label>
                     <div class="flex items-center space-x-2">
-                        <input type="number" id="annualRateInput" placeholder="e.g., 12" class="flex-1 rounded-xl p-2">
                         <input type="range" id="annualRateSlider" min="1" max="30" step="0.1" value="12" class="flex-1">
+                        <input type="number" id="annualRateInput" placeholder="e.g., 12" class="w-2/5">
                     </div>
                     <div class="flex justify-between mt-2 space-x-2">
                         <button data-rate="14" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Equity (14%)</button>
@@ -205,16 +206,16 @@
                 <div class="input-card flex flex-col">
                     <label for="inflationRateInput" class="mb-1">Expected Annual Inflation Rate (%):</label>
                     <div class="flex items-center space-x-2">
-                        <input type="number" id="inflationRateInput" placeholder="e.g., 6" class="flex-1 rounded-xl p-2">
                         <input type="range" id="inflationRateSlider" min="0" max="15" step="0.1" value="6" class="flex-1">
+                        <input type="number" id="inflationRateInput" placeholder="e.g., 6" class="w-2/5">
                     </div>
                 </div>
 
                 <div class="input-card flex flex-col">
                     <label for="taxRateInput" class="mb-1">Tax Rate (%):</label>
                     <div class="flex items-center space-x-2">
-                        <input type="number" id="taxRateInput" placeholder="e.g., 10" class="flex-1 rounded-xl p-2">
                         <input type="range" id="taxRateSlider" min="0" max="50" step="1" value="10" class="flex-1">
+                        <input type="number" id="taxRateInput" placeholder="e.g., 10" class="w-2/5">
                     </div>
                 </div>
                 <button id="calculateCorpusBtn" class="btn-primary w-full mt-6">Calculate Corpus</button>
@@ -238,7 +239,7 @@
                         <div class="space-y-4 mt-4">
                             <div class="input-card flex flex-col mb-4">
                                 <label for="withdrawalStrategy" class="mb-1">Withdrawal Strategy:</label>
-                                <select id="withdrawalStrategy" class="w-full p-2 border border-gray-300 rounded-xl disabled-input">
+                                <select id="withdrawalStrategy" class="w-full disabled-input">
                                     <option value="fixed">Fixed Withdrawal</option>
                                     <option value="increasing">Increasing Withdrawal (with Inflation)</option>
                                     <option value="sustained">Sustained Withdrawal (for X years)</option>
@@ -247,17 +248,17 @@
 
                             <div id="fixedWithdrawalGroup" class="input-card flex flex-col mb-4">
                                 <label for="withdrawalAmount" class="mb-1">Desired Withdrawal Amount:</label>
-                                <input type="number" id="withdrawalAmount" placeholder="e.g., 50000" class="w-full disabled-input rounded-xl p-2">
+                                <input type="number" id="withdrawalAmount" placeholder="e.g., 50000" class="w-full disabled-input">
                             </div>
 
                             <div id="sustainedYearsGroup" class="input-card flex-col mb-4 hidden">
                                 <label for="sustainedYears" class="mb-1">Withdrawal Period (Years):</label>
-                                <input type="number" id="sustainedYears" placeholder="e.g., 20" class="w-full disabled-input rounded-xl p-2">
+                                <input type="number" id="sustainedYears" placeholder="e.g., 20" class="w-full disabled-input">
                             </div>
 
                             <div class="input-card flex flex-col mb-4">
                                 <label for="incomeFrequency" class="mb-1">Withdrawal Frequency:</label>
-                                <select id="incomeFrequency" class="w-full p-2 border border-gray-300 rounded-xl disabled-input">
+                                <select id="incomeFrequency" class="w-full disabled-input">
                                     <option value="12">Monthly</option>
                                     <option value="4">Quarterly</option>
                                     <option value="2">Half-Yearly</option>
