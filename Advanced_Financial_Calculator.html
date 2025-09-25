@@ -19,7 +19,7 @@
         }
         .calculator-card {
             background-color: white;
-            padding: 2.5rem;
+            padding: 1.5rem;
             border-radius: 1.5rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             max-width: 38rem; /* Reverted max-width to a single column design */
@@ -28,7 +28,7 @@
         }
         .input-card {
             background-color: #f9fafb;
-            padding: 1rem;
+            padding: 0.5rem 0.75rem;
             border-radius: 0.75rem;
             border: 1px solid #e5e7eb;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -46,7 +46,7 @@
             background-color: white;
             color: #1f2937;
             border-radius: 0.75rem;
-            padding: 0.75rem;
+            padding: 0.5rem;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
         .input-card input[type="number"]:focus, .input-card select:focus {
@@ -58,7 +58,7 @@
             background-color: #E34037;
             color: white;
             font-weight: 600;
-            padding: 0.75rem 1.5rem;
+            padding: 0.625rem 1.25rem;
             border-radius: 0.75rem;
             transition: background-color 0.2s;
             cursor: pointer;
@@ -66,20 +66,11 @@
         .btn-primary:hover {
             background-color: #bb2c22;
         }
-        .btn-toggle {
-            background-color: #EFEFEF;
-            color: #6B7280;
-        }
-        .btn-toggle.active {
-            background-color: #E34037;
-            color: white;
-            box-shadow: 0 2px 4px rgba(227, 64, 55, 0.2);
-        }
         .result-box {
             background-color: #f9fafb;
-            border: 1px solid #fecaca;
-            color: #1e40af;
-            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            color: #1f2937;
+            padding: 1.5rem;
             border-radius: 0.75rem;
             margin-top: 1.5rem;
             font-weight: 500;
@@ -119,13 +110,6 @@
             box-shadow: 0 0 0 3px rgba(227, 64, 55, 0.3);
             transition: background 0.2s;
         }
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #E34037;
-            border-radius: 50%;
-            cursor: pointer;
-        }
         .pill-toggle-container {
             display: flex;
             padding: 0.25rem;
@@ -134,7 +118,7 @@
             border: 1px solid #fca5a5;
         }
         .pill-toggle-btn {
-            padding: 0.5rem 1rem;
+            padding: 0.375rem 0.75rem;
             font-size: 0.875rem;
             font-weight: 600;
             border-radius: 9999px;
@@ -148,18 +132,85 @@
             color: white;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
         }
+
+        /* Tooltip Styles */
+        .info-tooltip-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .info-icon {
+            cursor: pointer;
+            margin-left: 8px;
+            color: #9ca3af;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            width: 220px;
+            background-color: #1f2937;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            font-weight: 400;
+        }
+        .info-tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Enhanced Result Display Styles */
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+        .result-card {
+            background-color: #fff;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .result-card .label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.25rem;
+        }
+         .result-card .value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .result-card .icon {
+            margin-right: 0.5rem;
+            width: 1.25rem;
+            height: 1.25rem;
+        }
     </style>
 </head>
 <body class="p-4">
 
-    <div class="text-center my-8">
+    <div class="text-center my-4">
         <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800">Financial Calculator</h1>
         <p class="mt-2 text-lg text-gray-500">Plan your investments and retirement with advanced analysis.</p>
     </div>
 
     <!-- Unified Calculator -->
     <div class="calculator-card">
-        <div class="flex justify-center mb-6">
+        <div class="flex justify-center mb-4">
              <div class="pill-toggle-container">
                 <button id="lumpsumToggleBtn" class="pill-toggle-btn active">Lump-Sum</button>
                 <button id="sipToggleBtn" class="pill-toggle-btn">SIP</button>
@@ -167,18 +218,18 @@
             </div>
         </div>
 
-        <h2 id="calculatorTitle" class="text-2xl font-semibold text-gray-800 mb-6 text-center">Lump-Sum Investment</h2>
+        <h2 id="calculatorTitle" class="text-2xl font-semibold text-gray-800 mb-4 text-center">Lump-Sum Investment</h2>
         
-        <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-4">
             <!-- Top Section: Step 1 Inputs -->
-            <div class="space-y-4">
-                <h3 class="text-lg font-semibold text-gray-700">Step 1: Calculate Your Future Corpus</h3>
+            <div class="space-y-2">
+                <h3 class="text-lg font-semibold text-gray-700">Step 1: Grow Your Investment</h3>
                 
                 <div class="input-card flex flex-col">
                     <label id="mainAmountLabel" for="mainAmountInput" class="mb-1">Lump-Sum Amount (₹):</label>
                     <div class="flex items-center space-x-2">
                         <input type="range" id="mainAmountSlider" min="1000" max="10000000" step="1000" value="100000" class="flex-1">
-                        <input type="number" id="mainAmountInput" placeholder="e.g., 100000" class="w-2/5">
+                        <input type="number" id="mainAmountInput" placeholder="e.g., 100000" class="w-2/5" value="100000">
                     </div>
                 </div>
 
@@ -186,15 +237,18 @@
                     <label for="investmentYearsInput" class="mb-1">Investment Period (Years):</label>
                     <div class="flex items-center space-x-2">
                         <input type="range" id="investmentYearsSlider" min="1" max="50" step="1" value="10" class="flex-1">
-                        <input type="number" id="investmentYearsInput" placeholder="e.g., 10" class="w-2/5">
+                        <input type="number" id="investmentYearsInput" placeholder="e.g., 10" class="w-2/5" value="10">
                     </div>
                 </div>
 
                 <div class="input-card flex flex-col">
-                    <label for="annualRateInput" class="mb-1">Expected Annual Return (%):</label>
+                     <label for="annualRateInput" class="mb-1 info-tooltip-container">Expected Annual Return (%)
+                        <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+                        <span class="tooltip-text">This is the average return you expect from your investment each year. Equity funds average 12-15%, while FDs are around 6-7%.</span>
+                    </label>
                     <div class="flex items-center space-x-2">
                         <input type="range" id="annualRateSlider" min="1" max="30" step="0.1" value="12" class="flex-1">
-                        <input type="number" id="annualRateInput" placeholder="e.g., 12" class="w-2/5">
+                        <input type="number" id="annualRateInput" placeholder="e.g., 12" class="w-2/5" value="12">
                     </div>
                     <div class="flex justify-between mt-2 space-x-2">
                         <button data-rate="14" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Equity (14%)</button>
@@ -204,25 +258,31 @@
                 </div>
 
                 <div class="input-card flex flex-col">
-                    <label for="inflationRateInput" class="mb-1">Expected Annual Inflation Rate (%):</label>
+                     <label for="inflationRateInput" class="mb-1 info-tooltip-container">Expected Annual Inflation (%)
+                        <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+                        <span class="tooltip-text">Inflation is the rate at which prices for goods and services rise, reducing the purchasing power of your money. India's long-term average is around 6%.</span>
+                    </label>
                     <div class="flex items-center space-x-2">
                         <input type="range" id="inflationRateSlider" min="0" max="15" step="0.1" value="6" class="flex-1">
-                        <input type="number" id="inflationRateInput" placeholder="e.g., 6" class="w-2/5">
+                        <input type="number" id="inflationRateInput" placeholder="e.g., 6" class="w-2/5" value="6">
                     </div>
                 </div>
 
                 <div class="input-card flex flex-col">
-                    <label for="taxRateInput" class="mb-1">Tax Rate (%):</label>
+                     <label for="taxRateInput" class="mb-1 info-tooltip-container">Tax Rate (%)
+                        <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+                        <span class="tooltip-text">The tax applied to your investment gains. For FDs, it's as per your income slab. For stocks/mutual funds, long-term capital gains tax is typically 10%.</span>
+                    </label>
                     <div class="flex items-center space-x-2">
                         <input type="range" id="taxRateSlider" min="0" max="50" step="1" value="10" class="flex-1">
-                        <input type="number" id="taxRateInput" placeholder="e.g., 10" class="w-2/5">
+                        <input type="number" id="taxRateInput" placeholder="e.g., 10" class="w-2/5" value="10">
                     </div>
                 </div>
-                <button id="calculateCorpusBtn" class="btn-primary w-full mt-6">Calculate Corpus</button>
+                <button id="calculateCorpusBtn" class="btn-primary w-full mt-4">Calculate Corpus</button>
             </div>
 
             <!-- Bottom Section: Results and Step 2 Inputs -->
-            <div class="space-y-4">
+            <div class="space-y-2">
                  <div id="resultBox" class="result-box hidden">
                     <!-- Step 1 Result -->
                     <div id="corpusResult" class="mb-4 text-gray-800"></div>
@@ -235,8 +295,8 @@
                     <!-- Step 2 Inputs (Faded by default) -->
                     <div id="incomeSection" class="faded">
                         <hr class="my-4 border-gray-300">
-                        <h3 class="text-lg font-semibold text-gray-700">Step 2: Fixed Income Analysis</h3>
-                        <div class="space-y-4 mt-4">
+                        <h3 class="text-lg font-semibold text-gray-700">Step 2: Plan Your Withdrawals</h3>
+                        <div class="space-y-2 mt-4">
                             <div class="input-card flex flex-col mb-4">
                                 <label for="withdrawalStrategy" class="mb-1">Withdrawal Strategy:</label>
                                 <select id="withdrawalStrategy" class="w-full disabled-input">
@@ -247,7 +307,7 @@
                             </div>
 
                             <div id="fixedWithdrawalGroup" class="input-card flex flex-col mb-4">
-                                <label for="withdrawalAmount" class="mb-1">Desired Withdrawal Amount:</label>
+                                <label for="withdrawalAmount" class="mb-1">How much to withdraw?</label>
                                 <input type="number" id="withdrawalAmount" placeholder="e.g., 50000" class="w-full disabled-input">
                             </div>
 
@@ -266,12 +326,12 @@
                                 </select>
                             </div>
 
-                            <button id="calculateFixedIncomeBtn" class="btn-primary w-full disabled-input">Calculate Longevity</button>
+                            <button id="calculateFixedIncomeBtn" class="btn-primary w-full disabled-input">How Long Will It Last?</button>
                             <div id="incomeResult" class="mt-4 text-gray-800"></div>
                         </div>
                     </div>
                 </div>
-                <button id="resetBtn" class="btn-primary w-full mt-6 hidden">Reset Calculator</button>
+                <button id="resetBtn" class="btn-primary w-full mt-4 hidden">Reset Calculator</button>
             </div>
         </div>
     </div>
@@ -365,7 +425,7 @@
                                 pointRadius: 0
                             },
                             {
-                                label: 'Inflation-Adjusted Value',
+                                label: 'Real Value (Adjusted for Inflation)',
                                 data: data.real,
                                 borderColor: '#4ade80',
                                 tension: 0.1,
@@ -506,13 +566,9 @@
                 }
                 
                 const monthlyRate = annualRate / 12;
-                const monthlyInflationRate = inflationRate / 12;
                 
                 let nominalFutureValue = 0;
                 let totalInvested = 0;
-                let corpusHistoryNominal = [];
-                let corpusHistoryReal = [];
-                let yearsLabels = [];
                 
                 if (isLumpsumMode) {
                     nominalFutureValue = mainAmount * Math.pow((1 + monthlyRate), investmentYears * 12);
@@ -521,7 +577,6 @@
                     nominalFutureValue = mainAmount * ((Math.pow(1 + monthlyRate, investmentYears * 12) - 1) / monthlyRate) * (1 + monthlyRate);
                     totalInvested = mainAmount * investmentYears * 12;
                 } else if (isFdMode) {
-                    // Simple compound interest for FD
                     nominalFutureValue = mainAmount * Math.pow((1 + annualRate), investmentYears);
                     totalInvested = mainAmount;
                 }
@@ -529,10 +584,8 @@
                 const totalReturns = nominalFutureValue - totalInvested;
                 let taxPaid = 0;
                 if (isFdMode) {
-                    // Tax on total returns for FD
                     taxPaid = totalReturns * taxRate;
                 } else {
-                    // Simplified capital gains tax for SIP/Lumpsum
                     const taxableReturns = Math.max(0, totalReturns - (totalInvested * 0.15));
                     taxPaid = taxableReturns * taxRate;
                 }
@@ -540,10 +593,10 @@
                 const afterTaxFutureValue = nominalFutureValue - taxPaid;
                 const realFutureValue = afterTaxFutureValue / Math.pow((1 + inflationRate), investmentYears);
 
-                let currentNominalCorpus = isSipMode ? 0 : mainAmount;
-
+                let corpusHistoryNominal = [], corpusHistoryReal = [], yearsLabels = [];
                 for (let year = 0; year <= investmentYears; year++) {
                     yearsLabels.push(year);
+                    let currentNominalCorpus;
                     if (isSipMode) {
                         currentNominalCorpus = mainAmount * ((Math.pow(1 + annualRate/12, year * 12) - 1) / (annualRate/12)) * (1 + annualRate/12);
                     } else if (isFdMode) {
@@ -551,27 +604,41 @@
                     } else { // Lump-sum
                         currentNominalCorpus = mainAmount * Math.pow((1 + annualRate), year);
                     }
-                    
-                    const adjustedNominal = currentNominalCorpus;
-                    const adjustedReal = currentNominalCorpus / Math.pow((1 + inflationRate), year);
-
-                    corpusHistoryNominal.push(adjustedNominal);
-                    corpusHistoryReal.push(adjustedReal);
+                    corpusHistoryNominal.push(currentNominalCorpus);
+                    corpusHistoryReal.push(currentNominalCorpus / Math.pow((1 + inflationRate), year));
                 }
-
+                
                 corpusResult.innerHTML = `
-                    <h3 class="font-bold mb-2 text-xl">Your Corpus</h3>
-                    <p class="text-sm">Total Invested: <span class="font-bold">${formatCurrency(totalInvested)}</span></p>
-                    <p class="text-sm">Total Returns: <span class="font-bold text-green-700">${formatCurrency(totalReturns)}</span></p>
-                    <p class="text-sm">Taxes Paid: <span class="font-bold text-red-600">${formatCurrency(taxPaid)}</span></p>
-                    <hr class="my-2 border-gray-300">
-                    <p class="mt-2 text-sm">Estimated Corpus after ${investmentYears} years: <span class="text-2xl font-bold text-red-600">${formatCurrency(afterTaxFutureValue)}</span></p>
-                    <p class="text-sm">(Inflation-Adjusted: <span class="font-bold text-green-700">${formatCurrency(realFutureValue)}</span>)</p>
+                    <h3 class="font-bold mb-4 text-xl text-left">After ${investmentYears} years, you'll have:</h3>
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <div class="label"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0l.879-.659M7.5 12l.879.659c1.171.879 3.07.879 4.242 0l.879-.659M12 18.75h.008v.008H12v-.008z" /></svg>Total Invested</div>
+                            <div class="value">${formatCurrency(totalInvested)}</div>
+                        </div>
+                         <div class="result-card">
+                            <div class="label"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" /></svg>Wealth Gained</div>
+                            <div class="value text-green-600">${formatCurrency(totalReturns)}</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="label"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 7.756a4.5 4.5 0 100 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Taxes Paid</div>
+                            <div class="value text-red-600">${formatCurrency(taxPaid)}</div>
+                        </div>
+                    </div>
+                    <div class="text-center bg-white p-4 rounded-lg border">
+                        <p class="text-sm text-gray-600">Final Corpus (Post-Tax)</p>
+                        <p class="text-3xl font-bold text-red-600">${formatCurrency(afterTaxFutureValue)}</p>
+                        <p class="text-sm mt-1 text-gray-500">
+                             <span class="info-tooltip-container">Today's Value: 
+                                <strong class="text-green-700 ml-1">${formatCurrency(realFutureValue)}</strong>
+                                <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+                                <span class="tooltip-text">This is the purchasing power of your final corpus in today's money, after accounting for inflation.</span>
+                             </span>
+                        </p>
+                    </div>
                 `;
 
                 resultBox.classList.remove('hidden');
                 
-                // Activate Step 2
                 incomeSection.classList.remove('faded');
                 document.querySelectorAll('#incomeSection input, #incomeSection select, #incomeSection button').forEach(el => {
                     el.classList.remove('disabled-input');
@@ -580,11 +647,7 @@
                 
                 incomeResult.innerHTML = '';
                 futureValue = afterTaxFutureValue;
-                setupChart({
-                    labels: yearsLabels,
-                    nominal: corpusHistoryNominal,
-                    real: corpusHistoryReal
-                });
+                setupChart({ labels: yearsLabels, nominal: corpusHistoryNominal, real: corpusHistoryReal });
                 resetBtn.classList.remove('hidden');
             });
 
@@ -602,69 +665,42 @@
 
                 let periods;
                 let finalCorpus = 0;
-                let corpusHistoryNominal = [];
-                let corpusHistoryReal = [];
-                let yearsLabels = [];
                 let currentCorpus = futureValue;
                 const maxSimulationPeriods = 50 * withdrawalFrequency;
 
                 if (strategy === 'fixed') {
                     if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) {
-                        incomeResult.innerHTML = '<p class="error">Please enter a valid withdrawal amount.</p>';
-                        return;
+                        incomeResult.innerHTML = '<p class="error">Please enter a valid withdrawal amount.</p>'; return;
                     }
-
                     periods = 0;
                     while (currentCorpus > 0 && periods < maxSimulationPeriods) {
                         currentCorpus = currentCorpus * (1 + periodicRate) - withdrawalAmount;
                         periods++;
-                        corpusHistoryNominal.push(currentCorpus);
-                        corpusHistoryReal.push(currentCorpus / Math.pow((1 + periodicInflationRate), periods));
-                        yearsLabels.push(Math.floor(periods/withdrawalFrequency));
                     }
                     finalCorpus = Math.max(0, currentCorpus);
                 } else if (strategy === 'increasing') {
                     if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) {
-                        incomeResult.innerHTML = '<p class="error">Please enter a valid initial withdrawal amount.</p>';
-                        return;
+                        incomeResult.innerHTML = '<p class="error">Please enter a valid initial withdrawal amount.</p>'; return;
                     }
-
                     periods = 0;
                     let currentWithdrawal = withdrawalAmount;
                     while (currentCorpus > 0 && periods < maxSimulationPeriods) {
-                        currentCorpus = currentCorpus * (1 + periodicRate);
-                        currentCorpus -= currentWithdrawal;
+                        currentCorpus = currentCorpus * (1 + periodicRate) - currentWithdrawal;
                         periods++;
-                        
-                        // Increase withdrawal amount periodically with inflation
                         if (periods % withdrawalFrequency === 0) {
                             currentWithdrawal *= (1 + inflationRate);
                         }
-                        
-                        corpusHistoryNominal.push(currentCorpus);
-                        corpusHistoryReal.push(currentCorpus / Math.pow((1 + periodicInflationRate), periods));
-                        yearsLabels.push(Math.floor(periods/withdrawalFrequency));
                     }
                     finalCorpus = Math.max(0, currentCorpus);
                 } else if (strategy === 'sustained') {
                     if (isNaN(sustainedYears) || sustainedYears <= 0) {
-                        incomeResult.innerHTML = '<p class="error">Please enter a valid withdrawal period in years.</p>';
-                        return;
+                        incomeResult.innerHTML = '<p class="error">Please enter a valid withdrawal period in years.</p>'; return;
                     }
-
                     periods = sustainedYears * withdrawalFrequency;
-                    if (periodicRate === 0) {
-                        withdrawalAmount = futureValue / periods;
-                    } else {
-                        withdrawalAmount = (futureValue * periodicRate) / (1 - Math.pow(1 + periodicRate, -periods));
-                    }
-                    
+                    withdrawalAmount = (periodicRate === 0) ? futureValue / periods : (futureValue * periodicRate) / (1 - Math.pow(1 + periodicRate, -periods));
                     let nominalCorpus = futureValue;
                     for (let i = 0; i < periods; i++) {
                         nominalCorpus = nominalCorpus * (1 + periodicRate) - withdrawalAmount;
-                        corpusHistoryNominal.push(nominalCorpus);
-                        corpusHistoryReal.push(nominalCorpus / Math.pow((1 + periodicInflationRate), i));
-                        yearsLabels.push(Math.floor(i/withdrawalFrequency));
                     }
                     finalCorpus = Math.max(0, nominalCorpus);
                 }
@@ -674,52 +710,22 @@
                 const frequencyText = { 12: 'month(s)', 4: 'quarter(s)', 2: 'half-year(s)', 1: 'year(s)' }[withdrawalFrequency];
 
                 incomeResult.innerHTML = `
-                    <h3 class="font-bold mb-2 text-xl">Corpus Longevity</h3>
+                    <h3 class="font-bold mb-2 text-xl">How Long Your Money Will Last</h3>
                     ${strategy === 'sustained' ? 
-                        `<p class="text-sm">To sustain withdrawals for ${sustainedYears} years, you can withdraw:</p>
+                        `<p class="text-sm">To make your money last for ${sustainedYears} years, you can withdraw:</p>
                          <p class="text-2xl font-bold text-green-700">${formatCurrency(withdrawalAmount)} per period</p>` :
-                        `<p class="text-sm">Your corpus can provide a ${formatCurrency(withdrawalAmount)} withdrawal for:</p>
+                        `<p class="text-sm">Your savings can provide ${formatCurrency(withdrawalAmount)} for:</p>
                          <p class="text-2xl font-bold text-green-700">${years} years and ${remainingPeriods} ${frequencyText}</p>`
                     }
-                    ${periods >= maxSimulationPeriods ? `<p class="error">Your corpus can support this withdrawal amount indefinitely.</p>` : ''}
-                    <p class="mt-4 text-sm">Remaining corpus after this period: <span class="text-lg font-bold">${formatCurrency(finalCorpus)}</span></p>
+                    ${periods >= maxSimulationPeriods ? `<p class="text-green-600 mt-2">Based on this withdrawal rate, your money is projected to last indefinitely.</p>` : ''}
+                    <p class="mt-4 text-sm">Remaining balance after this period: <span class="text-lg font-bold">${formatCurrency(finalCorpus)}</span></p>
                 `;
-
-                // Update chart to include withdrawal phase
-                const initialHistory = corpusChart.data.datasets[0].data;
-                const initialRealHistory = corpusChart.data.datasets[1].data;
-                const initialLabels = corpusChart.data.labels;
-                const extendedLabels = [...initialLabels];
-                const extendedNominalData = [...initialHistory];
-                const extendedRealData = [...initialRealHistory];
-                
-                for (let i = 0; i < corpusHistoryNominal.length; i++) {
-                    extendedLabels.push(parseFloat(investmentYearsInput.value) + yearsLabels[i]);
-                    extendedNominalData.push(corpusHistoryNominal[i]);
-                    extendedRealData.push(corpusHistoryReal[i]);
-                }
-
-                corpusChart.data.labels = extendedLabels;
-                corpusChart.data.datasets[0].data = extendedNominalData;
-                corpusChart.data.datasets[1].data = extendedRealData;
-                corpusChart.update();
             });
             
-            // Initial state setup on page load
+            // Initial state setup
             document.querySelectorAll('#incomeSection input, #incomeSection select, #incomeSection button').forEach(el => {
                 el.classList.add('disabled-input');
                 el.disabled = true;
-            });
-            withdrawalStrategySelect.addEventListener('change', () => {
-                const strategy = withdrawalStrategySelect.value;
-                if (strategy === 'sustained') {
-                    fixedWithdrawalGroup.classList.add('hidden');
-                    sustainedYearsGroup.classList.remove('hidden');
-                    sustainedYearsGroup.classList.add('flex');
-                } else {
-                    fixedWithdrawalGroup.classList.remove('hidden');
-                    sustainedYearsGroup.classList.add('hidden');
-                }
             });
         });
     </script>
