@@ -125,7 +125,6 @@
             transition: background-color 0.2s, color 0.2s;
             cursor: pointer;
             text-align: center;
-            margin: 0 4px;
         }
         .pill-toggle-btn.active {
             background-color: #E34037;
@@ -141,8 +140,7 @@
         }
         .info-icon {
             cursor: pointer;
-            margin-left: 8px;
-            color: #9ca3af;
+            flex-shrink: 0; /* Prevents icon from shrinking */
         }
         .tooltip-text {
             visibility: hidden;
@@ -161,6 +159,7 @@
             transition: opacity 0.3s;
             font-size: 0.8rem;
             font-weight: 400;
+            pointer-events: none; /* Prevents the tooltip from blocking clicks */
         }
         .info-tooltip-container:hover .tooltip-text {
             visibility: visible;
@@ -291,7 +290,11 @@
                 <h3 class="text-lg font-semibold text-gray-700">Step 1: Grow Your Investment</h3>
                 
                 <div class="input-card flex flex-col">
-                    <label id="mainAmountLabel" for="mainAmountInput" class="mb-1">Lump-Sum Amount (₹):</label>
+                    <label id="mainAmountLabel" for="mainAmountInput" class="mb-1 info-tooltip-container">
+                        <span id="mainAmountLabelText">Lump-Sum Amount (₹):</span>
+                        <svg class="info-icon ml-2 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+                        <span id="mainAmountTooltip" class="tooltip-text">The total single amount you plan to invest at the beginning.</span>
+                    </label>
                     <div class="flex items-center space-x-2">
                         <input type="range" id="mainAmountSlider" min="1000" max="10000000" step="1000" value="100000" class="flex-1">
                         <input type="number" id="mainAmountInput" placeholder="e.g., 100000" class="w-2/5" value="100000">
@@ -299,7 +302,10 @@
                 </div>
 
                 <div class="input-card flex flex-col">
-                    <label for="investmentYearsInput" class="mb-1">Investment Period (Years):</label>
+                    <label for="investmentYearsInput" class="mb-1 info-tooltip-container">Investment Period (Years):
+                        <svg class="info-icon ml-2 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+                        <span class="tooltip-text">The total number of years you plan to keep your money invested to let it grow.</span>
+                    </label>
                     <div class="flex items-center space-x-2">
                         <input type="range" id="investmentYearsSlider" min="1" max="50" step="1" value="10" class="flex-1">
                         <input type="number" id="investmentYearsInput" placeholder="e.g., 10" class="w-2/5" value="10">
@@ -308,7 +314,7 @@
 
                 <div class="input-card flex flex-col">
                      <label for="annualRateInput" class="mb-1 info-tooltip-container">Expected Annual Return (%)
-                        <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+                        <svg class="info-icon ml-2 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
                         <span class="tooltip-text">This is the average return you expect from your investment each year. Equity funds average 12-15%, while FDs are around 6-7%.</span>
                     </label>
                     <div class="flex items-center space-x-2">
@@ -325,7 +331,7 @@
                 <div class="input-card flex flex-col">
                      <div class="flex justify-between items-center cursor-pointer" id="inflationHeader">
                         <label for="inflationRateInput" class="info-tooltip-container">Expected Annual Inflation (%)
-                            <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+                            <svg class="info-icon ml-2 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
                             <span class="tooltip-text">Inflation is the rate at which prices for goods and services rise, reducing the purchasing power of your money. India's long-term average is around 6%.</span>
                         </label>
                         <label class="toggle-switch">
@@ -344,7 +350,7 @@
                 <div class="input-card flex flex-col">
                      <div class="flex justify-between items-center cursor-pointer" id="taxHeader">
                         <label for="taxRateInput" class="info-tooltip-container">Tax Rate (%)
-                            <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+                            <svg class="info-icon ml-2 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
                             <span class="tooltip-text">The tax applied to your investment gains. For FDs, it's as per your income slab. For stocks/mutual funds, long-term capital gains tax is typically 10%.</span>
                         </label>
                         <label class="toggle-switch">
@@ -380,8 +386,20 @@
 
                         <div class="flex justify-center my-4">
                             <div class="pill-toggle-container">
-                               <button id="longevityToggleBtn" class="pill-toggle-btn active">Calculate Longevity</button>
-                               <button id="amountToggleBtn" class="pill-toggle-btn">Calculate Withdrawal</button>
+                               <div class="info-tooltip-container mx-1">
+                                   <button id="longevityToggleBtn" class="pill-toggle-btn active flex items-center justify-center">
+                                       <span>Calculate Longevity</span>
+                                       <svg class="info-icon ml-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+                                   </button>
+                                   <span class="tooltip-text">Calculates how many years your corpus will last if you withdraw a fixed amount regularly.</span>
+                               </div>
+                               <div class="info-tooltip-container mx-1">
+                                   <button id="amountToggleBtn" class="pill-toggle-btn flex items-center justify-center">
+                                       <span>Calculate Withdrawal</span>
+                                       <svg class="info-icon ml-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+                                   </button>
+                                   <span class="tooltip-text">Calculates the maximum amount you can withdraw regularly for a fixed number of years.</span>
+                               </div>
                            </div>
                        </div>
 
@@ -422,7 +440,9 @@
                         </div>
                     </div>
                 </div>
-                <button id="resetBtn" class="btn-primary w-full mt-4 hidden">Reset Calculator</button>
+                <div class="flex justify-center">
+                    <button id="resetBtn" class="btn-primary mt-4 hidden px-12">Reset Calculator</button>
+                </div>
             </div>
         </div>
     </div>
@@ -435,6 +455,8 @@
             const fdToggleBtn = getElem('fdToggleBtn');
             const calculatorTitle = getElem('calculatorTitle');
             const mainAmountLabel = getElem('mainAmountLabel');
+            const mainAmountLabelText = getElem('mainAmountLabelText');
+            const mainAmountTooltip = getElem('mainAmountTooltip');
             const mainAmountInput = getElem('mainAmountInput');
             const mainAmountSlider = getElem('mainAmountSlider');
             const investmentYearsInput = getElem('investmentYearsInput');
@@ -677,7 +699,8 @@
 
                 if (isLumpsumMode) {
                     calculatorTitle.textContent = 'Lump-Sum Investment';
-                    mainAmountLabel.textContent = 'Lump-Sum Amount (₹):';
+                    mainAmountLabelText.textContent = 'Lump-Sum Amount (₹):';
+                    mainAmountTooltip.textContent = 'The total single amount you plan to invest at the beginning.';
                     mainAmountInput.placeholder = 'e.g., 100000';
                     mainAmountSlider.max = "100000000"; // 10 Crore
                     mainAmountInput.max = "100000000";
@@ -685,7 +708,8 @@
                     mainAmountSlider.value = "100000";
                 } else if (isSipMode) {
                     calculatorTitle.textContent = 'SIP to Fixed Income';
-                    mainAmountLabel.textContent = 'Monthly SIP Amount (₹):';
+                    mainAmountLabelText.textContent = 'Monthly SIP Amount (₹):';
+                    mainAmountTooltip.textContent = 'The fixed amount you will invest every month.';
                     mainAmountInput.placeholder = 'e.g., 5000';
                     mainAmountSlider.max = "100000"; // 1 Lakh
                     mainAmountInput.max = "100000";
@@ -693,7 +717,8 @@
                     mainAmountSlider.value = "5000";
                 } else if (isFdMode) {
                     calculatorTitle.textContent = 'Fixed Deposit (FD)';
-                    mainAmountLabel.textContent = 'FD Amount (₹):';
+                    mainAmountLabelText.textContent = 'FD Amount (₹):';
+                    mainAmountTooltip.textContent = 'The one-time principal amount you are depositing in the Fixed Deposit.';
                     mainAmountInput.placeholder = 'e.g., 500000';
                     mainAmountSlider.max = "50000000"; // 5 Crore
                     mainAmountInput.max = "50000000";
@@ -877,7 +902,7 @@
                     } else if (isFdMode) {
                         currentNominalCorpus = mainAmount * Math.pow((1 + annualRate), year);
                     } else { // Lump-sum
-                        currentNominalCorpus = mainAmount * Math.pow((1 + annualRate), year);
+                        currentNominalCorpus = mainAmount * Math.pow((1 + monthlyRate), year * 12);
                     }
                     corpusHistoryNominal.push(currentNominalCorpus);
                     corpusHistoryReal.push(currentNominalCorpus / Math.pow((1 + inflationRate), year));
@@ -890,7 +915,7 @@
                         <p class="text-sm mt-1 text-gray-500">
                              <span class="info-tooltip-container">Today's Value: 
                                 <strong class="text-green-700 ml-1">${formatCurrency(realFutureValue)}</strong>
-                                <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+                                <svg class="info-icon ml-2 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.055.491.223.57.45l.082.38-.45.083a.502.502 0 0 0-.423.49l-.022.46-.364.073.022.46c.015.322.21.61.506.758.296.148.64.21.99.21.35 0 .694-.062.99-.21.296-.148.49-.436.506-.758l.022-.46-.364-.073-.022-.46a.502.502 0 0 0-.423-.49l-.45-.083.082-.38c.078-.227.276-.395.57-.45l.45-.083-.082-.38-.29-.287zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
                                 <span class="tooltip-text">This is the purchasing power of your final corpus in today's money, after accounting for inflation.</span>
                              </span>
                         </p>
@@ -982,7 +1007,7 @@
                                 ${periods >= maxSimulationPeriods ? `<p class="text-sm text-green-600 mt-1">Your money is projected to last indefinitely at this rate.</p>` : ''}
                             </div>
                             <div class="result-card bg-gray-50 border-gray-200 p-4 flex flex-col justify-center">
-                                <div class="label"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 3a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 3V9M3 12V9" /></svg>Remaining Balance</div>
+                                <div class="label"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5zM13.5 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5z" /></svg>Remaining Balance</div>
                                 <div class="value text-xl mt-1">${formatCurrency(finalCorpus)}</div>
                                 <p class="text-xs text-gray-500 mt-1">The projected balance after the withdrawal period.</p>
                             </div>
@@ -1019,7 +1044,7 @@
                                 <p class="text-sm text-gray-600 mt-1">per ${frequencyTextSingular}, for ${sustainedYears} years.</p>
                             </div>
                             <div class="result-card bg-gray-50 border-gray-200 p-4 flex flex-col justify-center">
-                                 <div class="label"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 3a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 3V9M3 12V9" /></svg>Remaining Balance</div>
+                                 <div class="label"><svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5zM13.5 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5z" /></svg>Remaining Balance</div>
                                  <div class="value text-xl mt-1">${formatCurrency(finalCorpus)}</div>
                                  <p class="text-xs text-gray-500 mt-1">The projected balance after ${sustainedYears} years.</p>
                             </div>
