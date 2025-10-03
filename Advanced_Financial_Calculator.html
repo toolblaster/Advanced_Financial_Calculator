@@ -22,7 +22,7 @@
             padding: 1rem;
             border-radius: 1.5rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            max-width: 72rem; /* Increased max-width for two-column layout */
+            max-width: 1000px; /* Re-constrained width for stability */
             margin: 2rem auto;
             border: 1px solid #e5e7eb;
             transition: all 0.3s ease-in-out;
@@ -38,7 +38,7 @@
             background-color: #f9fafb;
             padding: 0.625rem; /* Reduced padding */
             border-radius: 0.75rem;
-            border: 1px solid #e5e7eb;
+            border: 1px solid #f87171; /* Red border applied */
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
         .input-card:focus-within {
@@ -76,6 +76,19 @@
         }
         .btn-primary:active {
             transform: scale(0.98);
+        }
+        .btn-secondary {
+            background-color: #fee2e2; /* red-100 */
+            color: #b91c1c; /* red-700 */
+            font-weight: 500;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        .btn-secondary:hover {
+            background-color: #fecaca; /* red-200 */
         }
         /* Results Section Styling */
         .results-column {
@@ -261,7 +274,7 @@
         .header-area {
             background-color: #ffffff;
             border-radius: 1.5rem;
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem; /* Reduced padding */
             margin-bottom: 2rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             border: 1px solid #e5e7eb;
@@ -281,12 +294,12 @@
 
         <div class="header-area text-center">
             <div class="flex items-center justify-center mb-2">
-                <svg class="w-10 h-10 text-red-600 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <svg class="w-8 h-8 text-red-600 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
                 </svg>
-                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800">Horizon Financial Planner</h1>
+                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800">Horizon Financial Planner</h1>
             </div>
-            <p class="mt-2 text-lg text-gray-500">A dynamic tool for investment growth and retirement income planning.</p>
+            <p class="mt-1 text-base text-gray-500">A dynamic tool for investment growth and retirement income planning.</p>
         </div>
 
         <div class="calculator-card">
@@ -300,8 +313,7 @@
                             <button id="fdToggleBtn" class="pill-toggle-btn">FD</button>
                         </div>
                     </div>
-
-                    <h2 id="calculatorTitle" class="text-2xl font-semibold text-gray-800 mb-4 text-center">Lump-Sum Investment</h2>
+                     <h2 id="calculatorTitle" class="text-2xl font-semibold text-gray-800 mb-4 text-center">Lump-Sum Investment</h2>
                     
                     <div class="flex flex-col gap-3">
                         <div class="space-y-2">
@@ -336,9 +348,9 @@
                                     <input type="number" id="annualRateInput" placeholder="e.g., 12" class="w-2/5" value="12" min="1" max="30">
                                 </div>
                                 <div class="flex justify-between mt-2 space-x-2">
-                                    <button data-rate="14" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Equity (14%)</button>
-                                    <button data-rate="10" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Hybrid (10%)</button>
-                                    <button data-rate="7" class="btn-rate btn-primary flex-1 text-xs sm:text-base">Debt (7%)</button>
+                                    <button data-rate="14" class="btn-rate btn-secondary flex-1">Equity (14%)</button>
+                                    <button data-rate="10" class="btn-rate btn-secondary flex-1">Hybrid (10%)</button>
+                                    <button data-rate="7" class="btn-rate btn-secondary flex-1">Debt (7%)</button>
                                 </div>
                             </div>
                             <div class="input-card flex flex-col">
@@ -371,27 +383,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="step1-error" class="text-red-600 text-sm mt-2"></div>
-                        </div>
-                    </div>
-
-                    <!-- Yearly Breakdown Section -->
-                    <div id="yearlyBreakdown" class="mt-6 hidden">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Yearly Growth Breakdown</h3>
-                        <div class="yearly-breakdown-container">
-                            <table class="w-full text-sm text-left text-gray-500">
-                                <thead class="text-xs text-gray-700 uppercase bg-gray-200 sticky top-0">
-                                    <tr>
-                                        <th scope="col" class="px-4 py-3">Year</th>
-                                        <th scope="col" class="px-4 py-3">Invested</th>
-                                        <th scope="col" class="px-4 py-3">Interest</th>
-                                        <th scope="col" class="px-4 py-3">End Value</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="yearlyBreakdownBody">
-                                    <!-- Rows will be inserted here by JavaScript -->
-                                </tbody>
-                            </table>
+                             <div id="step1-error" class="text-red-600 text-sm mt-2"></div>
                         </div>
                     </div>
                 </div>
@@ -463,6 +455,26 @@
             </div>
             <div class="flex justify-center mt-4">
                 <button id="resetBtn" class="btn-primary mt-4 px-12">Reset Calculator</button>
+            </div>
+        </div>
+
+        <!-- Yearly Breakdown Section -->
+        <div id="yearlyBreakdown" class="calculator-card mt-6 hidden bg-rose-50 border-rose-200">
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">Yearly Growth Breakdown</h3>
+            <div class="yearly-breakdown-container">
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-200 sticky top-0">
+                        <tr>
+                            <th scope="col" class="px-4 py-3">Year</th>
+                            <th scope="col" class="px-4 py-3">Invested</th>
+                            <th scope="col" class="px-4 py-3">Interest</th>
+                            <th scope="col" class="px-4 py-3">End Value</th>
+                        </tr>
+                    </thead>
+                    <tbody id="yearlyBreakdownBody">
+                        <!-- Rows will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -633,13 +645,12 @@
             };
             
             const calculateAndDisplayCorpus = () => {
-                step1Error.textContent = '';
                 const mainAmount = parseFloat(mainAmountInput.value);
                 const investmentYears = parseFloat(investmentYearsInput.value);
                 const annualRate = parseFloat(annualRateInput.value) / 100;
                 
                 if (isNaN(mainAmount) || mainAmount <= 0 || isNaN(investmentYears) || investmentYears <= 0 || isNaN(annualRate) || annualRate < 0) {
-                    step1Error.textContent = 'Please fill in all fields with valid, positive numbers.';
+                    if (step1Error) step1Error.textContent = 'Please fill in all fields with valid, positive numbers.';
                     resultsColumn.classList.remove('visible');
                     resultsContent.classList.add('hidden');
                     resultsPlaceholder.classList.remove('hidden');
@@ -648,6 +659,8 @@
                     futureValue = 0;
                     return;
                 }
+                if (step1Error) step1Error.textContent = '';
+
 
                 const inflationRate = inflationToggle.checked ? parseFloat(inflationRateInput.value) / 100 || 0 : 0;
                 const taxRate = taxToggle.checked ? parseFloat(taxRateInput.value) / 100 || 0 : 0;
@@ -763,11 +776,13 @@
                 updateSliderFill();
             };
 
-            syncInputs(mainAmountInput, mainAmountSlider);
-            syncInputs(investmentYearsInput, investmentYearsSlider);
-            syncInputs(annualRateInput, annualRateSlider);
-            syncInputs(inflationRateInput, inflationRateSlider);
-            syncInputs(taxRateInput, taxRateSlider);
+            // This block will fail if the elements don't exist.
+            // Let's ensure they are found before adding listeners.
+            if(mainAmountInput && mainAmountSlider) syncInputs(mainAmountInput, mainAmountSlider);
+            if(investmentYearsInput && investmentYearsSlider) syncInputs(investmentYearsInput, investmentYearsSlider);
+            if(annualRateInput && annualRateSlider) syncInputs(annualRateInput, annualRateSlider);
+            if(inflationRateInput && inflationRateSlider) syncInputs(inflationRateInput, inflationRateSlider);
+            if(taxRateInput && taxRateSlider) syncInputs(taxRateInput, taxRateSlider);
 
             const setupChart = (data) => {
                 const ctx = getElem('corpusChart').getContext('2d');
@@ -887,7 +902,7 @@
                 calculateAndDisplayCorpus();
             };
 
-            const resetUI = () => {
+                resetUI = () => {
                 resultsColumn.classList.remove('visible');
                 setTimeout(() => {
                     resultsContent.classList.add('hidden');
@@ -1019,10 +1034,15 @@
             };
 
             // Initial Setup
-            handleTaxToggle();
-            handleInflationToggle();
-            setupEventListeners();
-            calculateAndDisplayCorpus(); // Initial calculation on page load
+            // Check if critical elements exist before proceeding
+            if (mainAmountInput) {
+                handleTaxToggle();
+                handleInflationToggle();
+                setupEventListeners();
+                calculateAndDisplayCorpus(); // Initial calculation on page load
+            } else {
+                console.error("Initialization failed: Critical input elements not found in the DOM.");
+            }
         });
     </script>
 </body>
